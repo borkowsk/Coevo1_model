@@ -1,4 +1,4 @@
-/* Program symulujacy KOEWOLUCJE v1 */
+/* Program symulujacy KOEWOLUCJE v1 rewizytowana po 2010 */
 /* Kazdy osobnik ma swoj bitowy wzorzec odzywiania i bitowy wzorzec */
 /* strategi oslony. Jesli ATAKOWANY.OSLONA AND ATAKUJACY.GEBA>0 to  */
 /* znaczy ze atak zakonczyl sie powodzeniem.			    */
@@ -6,12 +6,25 @@
 /* Ruchy wlasne, ofiara ataku, jak i moment rozmnazania wybierane sa */
 /*losowo, aby nie zaciemniac modelu dodatkowymi parametrami. 	     */
 
+#define  _CRT_SECURE_NO_WARNINGS //2013 - MSVC++ 2012 required this to complie strcpy()
+
+#include <assert.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <math.h>
+#include <signal.h>
+//#include "dos&unix.h"
+#define USES_STDC_RAND
+#include "INCLUDE/Random.h"
+#include "SYMSHELL/symshell.h"
+
 #ifdef unix
 const unsigned MAXBOKSWIATA=200;
 const unsigned TAX_OUT=256;
 #else
-const unsigned MAXBOKSWIATA=75; // swiat jest torusem o obwodzie polodnika = BOKSWIATA
-const unsigned TAX_OUT=128;
+const unsigned MAXBOKSWIATA=100; // swiat jest torusem o obwodzie polodnika = BOKSWIATA
+const unsigned TAX_OUT=101;
 #endif
 			     // 75,100 wpada w cykl z rand ?!
 			     // 101 efekt low-migration , artefakt rand
@@ -24,7 +37,7 @@ double EFEKTYWNOSC_AUTOTROFA=0.99; // jaka czesc swiatla uzywa autotrof
 const unsigned MINIMALNY_WIEK=155;    // Rodzi sie z tym wiekiem. Do smierci ma 255-MINIMALNY_WIEK
 const unsigned NIEPLODNOSC=10;       // Prawdopodobienstwo rozmnazania jest 1/NIEPLODNOSC
 const unsigned PROMIENIOWANIE=160; // Co ile kopiowanych bitow nastepuje mutacja
-unsigned VisRand=0;       // Czy pokazywac tlo randomizera
+unsigned VisRand=0;       // Czy pokazywac tlo randomizera (???2013)
 unsigned LogRatio=1;      // Co ile krokow zapisywac do logu
 char     LogName[128]="coewo.log";
 
@@ -32,24 +45,18 @@ char     LogName[128]="coewo.log";
 /* JEST TYLE MOZLIWYCH TAXONOW ILE WZORCOW BITOWYCH W base2 */
 typedef unsigned char base;   // musi byc bez znaku
 typedef unsigned short base2; // musi miescic 2 zmienne base
-const base2 MAXBASE2=(base2)0xffffffffffffffffL;
+const int   MAXINT=0x1fffffffL;
+const base2 MAXBASE2=(base2)0xffffffffL;
 const base  MAXBASE =(base)MAXBASE2;
 const base  AUTOTROF=MAXBASE;// wzor bitowy autotrofa - swiat go zywi
 
-#include <assert.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <math.h>
-#include <signal.h>
-#include "dos&unix.h"
-#include "symshell.h"
+
 
 /* Czesc niezalezna od platformy */
 /*********************************/
-int parse_options(int argc,char* argv[])
+int parse_options(int argc,const char* argv[])
 {
-char* pom;
+const char* pom;
 for(int i=1;i<argc;i++)
     {
     if( *argv[i]=='-' ) /* Opcja X lub symshella */
@@ -144,7 +151,7 @@ static unsigned plot_mode; 	// co ma byc wyswietlane
 static unsigned ile_ind;// ile jest zywych indywiduow
 static unsigned ile_tax;// ile taxonow niezerowych
 static unsigned ile_big_tax;// ile taxonow liczniejszych niz 10
-static unsigned huge liczniki[ (long)MAXBASE2+1 ];// Liczniki liczebnosci taxonow
+static unsigned liczniki[ (long)MAXBASE2+1 ];// Liczniki liczebnosci taxonow
 public:
 static void set_mode(int p) { if(p>=0 && p<=4) plot_mode=p; }
 static unsigned char tax_val(base2);
@@ -228,13 +235,13 @@ switch(plot_mode){
 	fprintf(stderr,"INTERNAL: plot_mode=%d >3\n",plot_mode);
 	abort();
  };
-::plot(x,y,pom);
+::plot(x,y,(pom<256?pom:255));
 }
 
 unsigned char indywiduum::tax_val(base2 f)
 {
-if(liczniki[f]==0) return 0;
-return (log10(liczniki[f])/log10(max))*255;
+	if(liczniki[f]==0) return 0;
+	return (unsigned char)(( log10(double(liczniki[f]))/log10(double(max)) ) * 255); //bo MSVC++ ma:  error C2668: 'log10' : ambiguous call to overloaded function
 }
 
 void indywiduum::tax(base2 f)
@@ -287,8 +294,8 @@ if(indywiduum::plot_mode==4)
 void swiat::wskazniki()
 {
 /* LOSOWANIE SKAMIENIALOSCI */
-unsigned x=Random(BOKSWIATA*2);
-unsigned y=Random(BOKSWIATA);
+unsigned x=RANDOM(BOKSWIATA*2);
+unsigned y=RANDOM(BOKSWIATA);
 printc(0,textY,0,128,"%c [%lu] IND:%lu TAX:%lu BIG:%lu ",
 	//indywiduum::nazwy[indywiduum::plot_mode],
 	char('A'+indywiduum::plot_mode),
@@ -326,15 +333,16 @@ while(input_ready())
 	case '+':VisRand=1;break;
 	case '-':VisRand=0;break;
 	case 'b':{
-		int x=Random(BOKSWIATA*2);
+		int x=RANDOM(BOKSWIATA*2);
 		assert(x>=0 && x<BOKSWIATA*2);
-		int y=Random(BOKSWIATA);
+		int y=RANDOM(BOKSWIATA);
 		assert(y>=0 && y<BOKSWIATA);
-		double power=DRand();
+		double power=DRAND();
 		assert(power>=0 && power<=1);
 		Krater(x,y,int(power*BOKSWIATA));
 		}break;
         case 'f':fflush(log);break;
+    case -1:
 	case 'q':/*QUIT */ return 0;
 	}
 	}
@@ -346,7 +354,6 @@ return 1;
 
 void swiat::init()
 {
-
 ziemia[BOKSWIATA/2][BOKSWIATA].init(MAXBASE2,0xff);
 
 fprintf(log,"%ux%u\tWYP_POT=%f\tEFEKT=%f\tMAX_WIEK=%d\tPLOD=%f\tRTG=%f\tBUM=0.5^%d\n",
@@ -457,7 +464,7 @@ assert(w._full>0);
 base2 indywiduum::kopioj(base2 r)
 // kopiuje genotyp z mozliwa mutacja
 {
-base2 mask=( Random(PROMIENIOWANIE) );
+base2 mask=( RANDOM(PROMIENIOWANIE) );
 if(mask<=16) // Prowizorka - nieprzenosne jesli base >16bitowe
 	{
 	mask=0x1<<mask;
@@ -477,10 +484,10 @@ long ile= long(BOKSWIATA)*long(2*BOKSWIATA); // ile na krok MonteCarlo
 licznik++;
 for(long i=0;i<ile;i++) // rob krok MonteCarlo
 	{
-	unsigned x=Random(BOKSWIATA*2);
-	unsigned y=Random(BOKSWIATA);
+	unsigned x=RANDOM(BOKSWIATA*2);
+	unsigned y=RANDOM(BOKSWIATA);
     if(VisRand)
-	plot(x,y,1);
+		plot(x,y,255+128);//+ 26.09.2013
 	if(!ziemia[y][x].jest_zywy()) // jest martwy
 		continue;		// obrob nastepnego
 	ziemia[y][x].uplyw_czasu();
@@ -490,13 +497,13 @@ for(long i=0;i<ile;i++) // rob krok MonteCarlo
 		plot(x,y,0);		// zamaz
 		continue;               // obrob nastepnego
 		}
-	unsigned a=Random(8);
+	unsigned a=RANDOM(8);
 	assert(a<8);
 	unsigned x1=(x+kierunki[a].x) % (BOKSWIATA*2);
 	unsigned y1=(y+kierunki[a].y) % BOKSWIATA;
 	if(!ziemia[y1][x1].jest_zywy()) // wolne miejsce
 	   {
-	   if(Random(NIEPLODNOSC)==0)     // rozmnazanie
+	   if(RANDOM(NIEPLODNOSC)==0)     // rozmnazanie
 		{
 		ziemia[y1][x1].init(ziemia[y][x]);
 		}
@@ -527,8 +534,8 @@ double power;
 int x,y;
 if(WSP_KATASTROF<0)
    return; //spontaniczne katastrofy wylaczone
-x=Random(BOKSWIATA*2);
-y=Random(BOKSWIATA);
+x=RANDOM(BOKSWIATA*2);
+y=RANDOM(BOKSWIATA);
 power=poison(WSP_KATASTROF);
 assert(power>=0 && power<=1);
 Krater(x,y,power*BOKSWIATA);
@@ -549,7 +556,7 @@ exit(par);
 
 void install_signal_hooks()
 {
-#ifdef __TURBOC__
+#ifndef __NONCOPATIBLE__
 typedef void (*SIG_TYPE)(int);
 #else
 typedef void (*SIG_TYPE)(...);
@@ -563,15 +570,16 @@ signal( SIGTERM ,(SIG_TYPE)MySignalHook);
 //signal(  ,MySignalHook());
 }
 
-main(int argc,char* argv[])
+int main(int argc,const char* argv[])
 {
-shell_setup("CO_EWOLUTION",argc,argv);
-printf("CO-EWOLUCJA: program symulujacy kooewolucje wielu gatunkow\n");
+shell_setup("CO-EVOLUTION",argc,argv);
+printf("KOEWOLUCJA: program symulujacy kooewolucje wielu gatunkow\n");
 printf("POLECENIA: 'g': GEBA 'o':OSLONA 's':SILA 'w':WIEK 'q':QUIT\n");
 printf("LICZBA MOZLIWYCH KLONOW=%lu MAXINT=%d\n",(unsigned long)MAXBASE2,MAXINT);
 
 if(!parse_options(argc,argv))
         exit(1);
+
 if(sizeof(base)*2!=sizeof(base2))
 	{
 	fprintf(stderr,"Niewlasciwe rozmiary dla typow bazowych:2*%u!=%u\n",
@@ -584,8 +592,11 @@ if(&tenSwiat==NULL)
     fprintf(stderr,"Brak pamieci!\n");
     exit(1);
     }
-Randomize();
-init_plot((BOKSWIATA*2>256?BOKSWIATA*2:256),textY,0,1);
+
+RANDOMIZE();
+
+init_plot( BOKSWIATA*2+1, textY,0,1); //(BOKSWIATA*2>256?BOKSWIATA*2:256) POCO???
+
 tenSwiat.init();
 tenSwiat.wskazniki();
 tenSwiat.caly_ekran();
@@ -608,7 +619,7 @@ double poison(int n)
 {
 double pom=1;
 for(int i=1;i<=n;i++)
-	pom*=DRand(); // Mnozenie przez wartosc od 0..1
+	pom*=DRAND(); // Mnozenie przez wartosc od 0..1
 assert(pom>=0 && pom<=1);
 return pom;
 }
@@ -621,7 +632,7 @@ unsigned indywiduum::plot_mode=0;// co ma byc wyswietlane
 unsigned indywiduum::ile_ind=0;// ile jest zywych indywiduow
 unsigned indywiduum::ile_tax=0;// ile taxonow niezerowych
 unsigned indywiduum::ile_big_tax=0;// ile taxonow liczniejszych niz 10
-unsigned huge indywiduum::liczniki[ (long)MAXBASE2+1 ];// Liczniki liczebnosci taxonow
+unsigned indywiduum::liczniki[ (long)MAXBASE2+1 ];// Liczniki liczebnosci taxonow
 				   // W DOSie sprawia klopot, stad cast
 
 /* KRATER - TRANSLATED FROM BASIC CODE IMPLEMENTED ELLIPSE DRAWING
