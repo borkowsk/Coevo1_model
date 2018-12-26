@@ -1,4 +1,4 @@
-/* Program symulujacy KOEWOLUCJE */
+/* Program symulujacy KOEWOLUCJE v0B */
 /* Kazdy osobnik ma swoj bitowy wzorzec odzywiania i bitowy wzorzec */
 /* strategi oslony. Jesli ATAKOWANY.OSLONA AND ATAKUJACY.GEBA>0 to  */
 /* znaczy ze atak zakonczyl sie powodzeniem.			    */
@@ -6,18 +6,20 @@
 /* Ruchy wlasne, ofiara ataku, jak i moment rozmnazania wybierane sa */
 /*losowo, aby nie zaciemniac modelu dodatkowymi parametrami. 	     */
 
-const BOKSWIATA=50; // swiat jest torusem o obwodzie polodnika = BOKSWIATA
+/* GLOWNE PARAMETRY SYMULACJI */
+const unsigned BOKSWIATA=20; // swiat jest torusem o obwodzie polodnika = BOKSWIATA
 const double WYPOSAZENIE_POTOMSTWA=0.1; // jaka czesc sily oddac potomkowi
 const double EFEKTYWNOSC_AUTOTROFA=0.3; // jaka czesc swiatla uzywa autotrof
-const MINIMALNY_WIEK=200; // Rodzi sie z tym wiekiem. Do smierci ma 255-MINIMALNY_WIEK
-const NIEPLODNOSC=10;  // Prawdopodobienstwo rozmnazania jest 1/NIEPLODNOSC
+const unsigned MINIMALNY_WIEK=200; // Rodzi sie z tym wiekiem. Do smierci ma 255-MINIMALNY_WIEK
+const unsigned NIEPLODNOSC=10;  // Prawdopodobienstwo rozmnazania jest 1/NIEPLODNOSC
 const PROMIENIOWANIE=64; // Co ile kopiowanych bitow nastepuje mutacja
 
 /* ROZMIAR TYPU BASE DECYDUJE O MOZLIWEJ KOMPLIKACJI SWIATA */
 /* JEST TYLE MOZLIWYCH TAXONOW ILE WZORCOW BITOWYCH W base2 */
 typedef unsigned char base;   // musi byc bez znaku
 typedef unsigned short base2; // musi miescic 2 zmienne base
-const base2 MAXBASE2=(base2)0xffffffffL;
+const base2 MAXBASE2=(base2)0xffffffffffffffffL;
+//#define MAXBASE2 ((base2)(0xffffffffffffffffL))
 const base  AUTOTROF=(base)MAXBASE2;// wzor bitowy autotrofa - swiat go zywi
 
 #include <assert.h>
@@ -96,7 +98,7 @@ inline void indywiduum::plot(int x,int y)
 {
 int pom;
 switch(plot_mode){
- case 0:pom=w.geba;	break;
+ case 0:pom=w.w.geba;	break;
  case 1:pom=w.w.oslona;	break;
  case 2:pom=sila;	break;
  case 3:pom=wiek;	break;
@@ -196,12 +198,10 @@ if(!jest_zywy()) // Jesli parametry startowe sa do D
 	assert(indywiduum::plot_mode<4);
 	return; }
 ile_ind++;
-assert(indywiduum::plot_mode==0);
-assert(w.full==iwfull);
+assert(indywiduum::plot_mode<4);
 liczniki[w.full]++;
 assert(liczniki[w.full]!=0);
-assert(w.full==iwfull);
-assert(indywiduum::plot_mode==0);
+assert(indywiduum::plot_mode<4);
 if( liczniki[w.full]==1 ) // pierwszy przedstawiciel taxonu
 		ile_tax++;   // wiec liczba taxonow wzrasta
 assert(indywiduum::plot_mode<4);
@@ -232,12 +232,13 @@ void indywiduum::init(indywiduum& rodzic)
 {
 assert(indywiduum::plot_mode<4);
 w.full=kopioj(rodzic.w.full);
-base2 cena=w.w.geba + (base)(~w.w.oslona) + rodzic.sila*WYPOSAZENIE_POTOMSTWA; // Oslona 0 jest najdrozsza
+unsigned uposazenie=unsigned(rodzic.sila*WYPOSAZENIE_POTOMSTWA);
+unsigned cena=w.w.geba + (base)(~w.w.oslona) + uposazenie ; // Oslona 0 jest najdrozsza
 if( rodzic.sila<=cena )  // Nie ma sily na potomka
 	{ w.full=0; return; }
 rodzic.sila-=cena; 	 // Placi za wyprodukowanie i wyposazenie
 assert(rodzic.sila!=0);
-init(w.full,rodzic.sila*WYPOSAZENIE_POTOMSTWA);   // prawdziwa inicjacja
+init(w.full,uposazenie);   // prawdziwa inicjacja
 }
 
 void indywiduum::kill(indywiduum& zabojca)
@@ -246,7 +247,7 @@ void indywiduum::kill(indywiduum& zabojca)
 assert(indywiduum::plot_mode<4);
 assert(w.full>0 && w.full<=MAXBASE2);
 /* Zabojca dostaje pewna czesc sily */
-zabojca.sila+=sila * double(w.w.oslona & zabojca.w.w.geba)/(w.w.oslona);
+zabojca.sila+=unsigned(sila * double(w.w.oslona & zabojca.w.w.geba)/(w.w.oslona));
 assert(zabojca.sila!=0);
 assert(w.full>0 && w.full<=MAXBASE2);
 /* Potem ofiara ginie */
@@ -261,7 +262,7 @@ assert(w.full>0 && w.full<=MAXBASE2);
 wiek++;	       // Normalne starzenie sie
 if(w.w.geba==AUTOTROF) //JEST  A U T O T R O F E M
 	{
-	sila+=100*EFEKTYWNOSC_AUTOTROFA-1;
+	sila+=unsigned(100*EFEKTYWNOSC_AUTOTROFA-1);
 	assert(sila!=0);
 	}
 	else
@@ -274,7 +275,6 @@ base2 indywiduum::kopioj(base2 r)
 // kopiuje genotyp z mozliwa mutacja
 {
 assert(indywiduum::plot_mode<4);
-/*
 base2 mask=( Random(PROMIENIOWANIE) );
 if(mask<=16) // Prowizorka - nieprzenosne jesli base >16bitowe
 	{
@@ -282,7 +282,6 @@ if(mask<=16) // Prowizorka - nieprzenosne jesli base >16bitowe
 	r^=mask;
 	}
 assert(indywiduum::plot_mode<4);
-*/
 return r;
 }
 
@@ -355,7 +354,7 @@ if(sizeof(base)*2!=sizeof(base2))
 	exit(1);
 	}
 Randomize();
-init_plot(BOKSWIATA*2,BOKSWIATA+10);
+init_plot(BOKSWIATA*2,BOKSWIATA);
 tenSwiat.init();
 tenSwiat.wskazniki();
 tenSwiat.caly_ekran();
