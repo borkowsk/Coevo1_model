@@ -1,28 +1,93 @@
-# CMAKE configuration for COEVO-lution1 simulation project
+# CMAKE configuration for COEVO-lution1 helpers aplications
 ######################################################################
 # @Author: Wojciech Borkowski
-# Define WITHTOOLS if you want build helpers aplications!
 #
 cmake_minimum_required(VERSION 2.8)
 
-project(coevolution1)
+project(coevolution_helpers)
 
-set(SYMSHELL "../SymShellLight")
+set(SYMSHELL "../../SymShellLight")
 
 add_subdirectory( ${SYMSHELL} ${SYMSHELL} ) 
 
-if(WITHTOOLS)
-   add_subdirectory( HELPERS/ )
-endif()
-
 include_directories( ${SYMSHELL} )
 
-add_executable( coevo1
-                coevo.cpp
+add_executable( and_pattern
+                AND_PATT.cpp
                 )
 
-target_link_libraries( coevo1 
+target_link_libraries( and_pattern 
      "-L${SYMSHELL}"
      wbsyshX11 X11 Xpm
      rt
      )
+
+add_executable( mapa_alt
+                MAPAALT.cpp
+                )
+
+target_link_libraries( mapa_alt 
+     "-L${SYMSHELL}"
+     wbsyshX11 X11 Xpm
+     rt
+     )
+
+add_executable( mapa_not
+                MAPANOT.cpp
+                )
+
+target_link_libraries( mapa_not 
+     "-L${SYMSHELL}"
+     wbsyshX11 X11 Xpm
+     rt
+     )
+
+add_executable( mapa_patt
+                MAPAPATT.cpp
+                )
+
+target_link_libraries( mapa_patt 
+     "-L${SYMSHELL}"
+     wbsyshX11 X11 Xpm
+     rt
+     )
+
+
+add_executable( meteory
+                METEORY.cpp
+                )
+
+target_link_libraries( meteory 
+     "-L${SYMSHELL}"
+     wbsyshX11 X11 Xpm
+     rt
+     )
+
+add_executable( paleta
+                PALETA.cpp
+                )
+
+target_link_libraries( paleta 
+     "-L${SYMSHELL}"
+     wbsyshX11 X11 Xpm
+     rt
+     )
+
+
+add_executable( realpatt
+                REALPATT.cpp
+                )
+
+target_link_libraries( realpatt 
+     "-L${SYMSHELL}"
+     wbsyshX11 X11 Xpm
+     rt
+     )
+
+
+
+
+
+
+
+

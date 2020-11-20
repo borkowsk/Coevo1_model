@@ -1,4 +1,7 @@
-
+/*
+ * MAPA INTERAKCJI - DRAPIEZNIK/OFIARA DLA COEWOLUCJI
+ * @AUTHOR: Wojciech Borkowski
+ */
 #include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -26,9 +29,9 @@ printc(0,256,1,128,"Pattern: (x and y)/x * (x and y)/y * MAX");
 /*  OGOLNA FUNKCJA MAIN */
 /************************/
 
-main(int argc,char* argv[])
+main(int argc,const char* argv[])
 {
-shell_setup("INTERACTION MAP",argc,argv);
+shell_setup("PATTERN OF INTERACTIONS",argc,argv);
 printf("MAPA INTERAKCJI - DRAPIEZNIK/OFIARA DLA COEWOLUCJI\n");
 printf("COLORS= 256 q-quit\n");
 Randomize();

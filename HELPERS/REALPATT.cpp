@@ -1,3 +1,7 @@
+/*
+ * REALNIE STWIERDZONE KLONY W SYMULACJI - DLA COEWOLUCJI
+ * @AUTHOR: Wojciech Borkowski
+ */
 #include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -8,8 +12,11 @@
 #include <dos.h>
 #endif
 #include <string.h>
-#include <iostream.h>
-#include <fstream.h>
+#include <iostream>
+#include <fstream>
+
+using namespace std;
+
 #include "dos&unix.h"
 #include "symshell.h"
 
@@ -23,16 +30,16 @@ typedef unsigned char licznik;
 typedef unsigned int licznik;
 #endif
 
-char* filename=NULL; //Nazwa pliku
+const char* filename=NULL; //Nazwa pliku
 char  opis[1024]; //Opis z pliku
 unsigned char far tab[SIZE][SIZE]; // tablica licznikow
-unsigned int max=2;
+unsigned int Max=2;
 long num=0;
 
 unsigned char tax_val(licznik f)
 {
 if(f==0) return 0;
-return (log10(f)/log10(max))*255;
+return (log10(f)/log10(Max))*255;
 }
 
 #ifdef __BORLANDC__
@@ -57,7 +64,7 @@ return s.eof();
 
 void load_next_record(istream& in)
 {
-long pop,tax,big,fos;
+unsigned long pop,tax,big,fos;
 if(pEOF(in))
 	{
 	sleep(0);
@@ -74,15 +81,15 @@ if(fos!=0)
   unsigned x=(fos&0xff00)>>8;//geba
   unsigned y=(fos&0x00ff);//oslona
   if( y==0 )
-	fprintf(stderr,"Invalid FOS value=%xl (x=%x y=%x)\n",fos,x,y);
+	fprintf(stderr,"Invalid FOS value=%lx (x=%x y=%x)\n",fos,x,y);
 #if SIZE==128
     x/=2;
     y/=2;
 #endif
   if(tab[y][x]<MAXLICZNIK)
 	    tab[y][x]++;
-  if(tab[y][x]>max)
-	    max=tab[y][x];
+  if(tab[y][x]>Max)
+        Max=tab[y][x];
   plot(x,y,tax_val(tab[y][x]));
   }
 }
@@ -105,7 +112,7 @@ printc(0,SIZE+char_height('X')*2,1,128,"%ld records             \t",num);
 /*  OGOLNA FUNKCJA MAIN */
 /************************/
 
-main(int argc,char* argv[])
+main(int argc,const char* argv[])
 {
 if(argc<2)
     {

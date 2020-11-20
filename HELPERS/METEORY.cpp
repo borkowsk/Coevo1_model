@@ -1,4 +1,7 @@
-
+/*
+ * SYMULACJA KATASTROF METEORYTOWYCHI - DLA COEWOLUCJI
+ * @AUTHOR: Wojciech Borkowski
+ */
 #include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -42,7 +45,7 @@ power=poison(WSPOLCZYNNIK);
 assert(power>=0 && power<=1);
 krater(x,y,power*SIZE,(1-power)*255/*+Random(10)-5*/);
 if(step%100==0)
-	print(0,SIZE,"[%ld] ",step);
+    printbw(0,SIZE,"[%ld] ",step);
 }
 
 double poison(int n)
@@ -183,10 +186,10 @@ fflush(stdout);
 /*  OGOLNA FUNKCJA MAIN */
 /************************/
 
-main(int argc,char* argv[])
+main(int argc,const char* argv[])
 {
 shell_setup("ASTEROIDS BOMBING",argc,argv);
-printf("SYMYLACJA KATASTROF METEORYTOWYCH \n");
+printf("SYMULACJA KATASTROF METEORYTOWYCH \n");
 printf("PARAMETR (N): Wykladnik rozkladu (0..1)^N    { q-quit }\n");
 
 Randomize();

@@ -1,4 +1,7 @@
-
+/*
+ * MAPA INTERAKCJI - 2D BIT "AND" PATTERN
+ * @AUTHOR: Wojciech Borkowski
+ */
 #include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -12,18 +15,17 @@ unsigned int i,j;
 unsigned char pom;
 for(i=0;i<256U; i++)
     for(j=0;j<256U; j++)
-	  {
+      {
           pom=(unsigned char)(i&j);
-         
           plot(j,i,pom);
-	  }
+      }
 printc(0,256,1,128,"Pattern: x and y");
 }
 
 /*  OGOLNA FUNKCJA MAIN */
 /************************/
 
-main(int argc,char* argv[])
+main(int argc,const char* argv[])
 {
 shell_setup("2D BIT \"AND\" PATTERN ",argc,argv);
 printf("COLORS= 256 q-quit\n");
@@ -35,7 +37,7 @@ while(1)
 {
 char pom=get_char();
 if(pom=='\r')
-	replot();
+   replot();
    else if(pom=='q') break;
 putchar(pom);
 fflush(stdout);

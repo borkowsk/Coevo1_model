@@ -1,6 +1,7 @@
 /*
-MAPA INTERAKCJI - DRAPIEZNIK/OFIARA DLA COEWOLUCJI
-*/
+ * MAPA INTERAKCJI - DRAPIEZNIK/OFIARA DLA COEWOLUCJI
+ * @AUTHOR: Wojciech Borkowski
+ */
 #include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -9,7 +10,7 @@ MAPA INTERAKCJI - DRAPIEZNIK/OFIARA DLA COEWOLUCJI
 #include "symshell.h"
 /* Funkcje ustalajace ceny dla "geb" i "oslon" */
 unsigned cena(unsigned char b);
-unsigned  not(unsigned char b);
+unsigned  Not(unsigned char b);
 
 /* Tablice na liczniki do srednich */
 long poziom[256];/* suma wierszy */
@@ -46,21 +47,21 @@ for(i=1;i<256; i++)
     assert(poziom[i]<=255);
     plot(257,i,poziom[i]);
     plot(258,i,poziom[i]);
-    plot(259,i,not(i));
-    plot(260,i,not(i));
+    plot(259,i,Not(i));
+    plot(260,i,Not(i));
     }
 }
 
 /*  OGOLNA FUNKCJA MAIN */
 /************************/
 
-main(int argc,char* argv[])
+main(int argc,const char* argv[])
 {
-shell_setup("INTERACTION MAP",argc,argv);
+shell_setup("(NOT) INTERACTION MAP",argc,argv);
 printf("MAPA INTERAKCJI - DRAPIEZNIK/OFIARA DLA COEWOLUCJI\n");
 printf("COLORS= 256 q-quit\n");
 Randomize();
-init_plot(260,260,0,0);
+init_plot(260,260,1,1);
 replot();
 flush_plot();
 while(1)
@@ -92,7 +93,7 @@ assert(c<=255);
 return c;
 }
 
-unsigned not(unsigned char b)
+unsigned Not(unsigned char b)
 {
 return (unsigned char)~b;
 }
