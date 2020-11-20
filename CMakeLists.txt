@@ -1,5 +1,6 @@
-# CMAKE configuration for SYMSHELLLIGHT libraries wbsyshSVG wbsyshX11
+# CMAKE configuration for COEVO-lution1 simulation project
 ######################################################################
+# @Author: Wojciech Borkowski
 # Define WITHTOOLS if you want build helpers aplications!
 #
 cmake_minimum_required(VERSION 2.8)
