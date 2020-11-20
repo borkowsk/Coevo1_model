@@ -1,4 +1,4 @@
-# coevo
+# coevo 1.x
 
 **Agent-Base Co-evolution Model started ~1995**
 
@@ -14,14 +14,14 @@ It need SYMSHELLLIGHT library in sister directory SymShellLight/ !
 
 So go into your choice directory and run:
 
-git clone https://github.com/borkowsk/SymShellLight.git
+  __$ git clone https://github.com/borkowsk/SymShellLight.git
 
-git clone https://github.com/borkowsk/Coevo.git
+  __$ git clone https://github.com/borkowsk/Coevo.git
 
 Then go into Coevo/ directory and and run:
 
-  cmake .
+  __$ cmake .
 
-  make
+  __$ make
 
-  ./coevo1
+  __$ ./coevo1
