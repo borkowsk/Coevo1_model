@@ -16,8 +16,8 @@
 #include <signal.h>
 //#include "dos&unix.h"
 #define USES_STDC_RAND
-#include "INCLUDE/Random.h"
-#include "SYMSHELL/symshell.h"
+#include "INCLUDE/Randoms.h"
+#include "symshell.h"
 
 #ifdef unix
 const unsigned MAXBOKSWIATA=200;
@@ -582,8 +582,8 @@ if(!parse_options(argc,argv))
 
 if(sizeof(base)*2!=sizeof(base2))
 	{
-	fprintf(stderr,"Niewlasciwe rozmiary dla typow bazowych:2*%u!=%u\n",
-		sizeof(base),sizeof(base2));
+	fprintf(stderr,"Niewlasciwe rozmiary dla typow bazowych:2*%lu!=%lu\n",
+		(unsigned long) sizeof(base),(unsigned long) sizeof(base2));
 	exit(1);
 	}
 swiat& tenSwiat=*new swiat(LogName);
