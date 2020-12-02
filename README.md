@@ -1,4 +1,4 @@
-# coevo 1.x
+# coevo 1.x - model of co-evolution of species
 
 **Agent-Base Co-evolution Model started ~1995**
 
