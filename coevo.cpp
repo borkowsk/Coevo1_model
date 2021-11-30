@@ -1,10 +1,10 @@
 /**
-  * COEVOLUTIONS v1 simulator revisited after 2010 to ensure compilability.
+  * COEVOLUTIONS v1 simulator revisited after 2010 and in year 2021 to ensure compilability.
   * Brief description of the operation of the model below.
   * (A detailed description can be found in the papers)
   * - Each individual has its own nutrition and bit pattern
   * - bit pattern for cover / defense strategy.
-  * - If ATTACKED.OBRONA and ATTACKER.GĘBA > 0 then
+  * - If ATTACKED.SHIELD and ATTACKER.JAWS > 0 then
   * - the attack was successful and
   * - there will be an energy transfer proportional to the similarity of the masks
   * Individuals reproduce at the expense of free space and accumulated energy
@@ -147,53 +147,51 @@ for(int i=1;i<argc;i++)
 return 1;
 }
 
-union wzor
+union pattern
 {
-base2 	_full;	// pełny wzór bitowy "taksonu"
+base2 	_full;	// full "taxon" bit pattern
 struct{
-	base geba;	// bitowy wzorzec trybu odżywiania
-	base oslona;// bitowy wzorzec sposobu ochrony
+	base jaws;	// food specialization bit pattern
+	base shield;// a bit pattern of the protection method
 	} w;
 };
 
-//unsigned huge liczniki[ MAX_BASE2+1 ];// Liczniki liczebności taksonów
-
-class indywiduum
+class individual
 {
-friend class swiat; // Direct access for a class world to these private fields
-unsigned char wiek; // How many times has he been at the CPU control? After rewinding the variable, it dies.
-unsigned sila;      // accumulated energy
-wzor w;		        // taxon bit pattern
+friend class world; // Direct access for a class world to these private fields
+unsigned     age:8; // How many times has he been at the CPU control? After rewinding the variable, it dies.
+unsigned energy:24; // accumulated energy
+pattern w;		    // taxon bit pattern
 /* STATIC FIELDS */
 static unsigned max;        //How big is the largest taxon?
 static unsigned max_change; //Has the maximum changed recently?
 static unsigned plot_mode; 	//What is to be displayed?
-static unsigned ile_ind;    //How many live individuals are there?
-static unsigned ile_tax;    //How many non-zero taxa?
-static unsigned ile_big_tax;//How many taxa are more than 10 individuals?
-static unsigned liczniki[ (long)MAX_BASE2+1 ];// Taxa counters
+static unsigned count_ind;  //How many live individuals are there?
+static unsigned count_tax;  //How many non-zero taxa?
+static unsigned cnt_big_tax;//How many taxa are more than 10 individuals?
+static unsigned counters[ (long)MAX_BASE2+1 ];// Taxa counters
 /* METHODS */
 public:
 static void set_mode(int p) { if(p>=0 && p<=4) plot_mode=p; }
-static unsigned char  tax_val(base2);    // TODO Why not inline?
+static inline unsigned char tax_val(base2);
 static inline   void  tax(base2);        // registration of the change in the taxon value on the screen
-static inline   base2 kopioj(base2 r);   // copies the genotype with a possible mutation
+static inline   base2 copy(base2 r);     // copies the genotype with a possible mutation
 
-int  jest_zywy(){ return (w.w.oslona!=0 && w.w.geba!=0 && sila!=0 && wiek!=0); }
-inline void init(base2 iwfull, unsigned isila); // initiation of a new individual
-inline void init(indywiduum& rodzic);   // the initiation of the new as a descendant of the old one
+int  is_alive(){ return (w.w.shield!=0 && w.w.jaws!=0 && energy!=0 && age!=0); }
+inline void init(base2 initial_pattern, unsigned initial_energy); // initiation of a new individual
+inline void init(individual& parent);   // the initiation of the new as a descendant of the old one
 inline void kill();		                // death of the individual
-inline void kill(indywiduum& zabojca);  // killing the individual by the 'killer' (energy flows)
-inline void uplyw_czasu();	            // the impact of the flowing time
+inline void kill(individual& killer);   // killing the individual by the 'killer' (energy flows)
+inline void time_lapse();	            // the impact of the flowing time 
 inline void plot(int x,int y);          // display individual according to the 'plot_mode' mode
 /*CONSTRUCTOR*/
-    indywiduum(){w._full=wiek=sila=0;}
-    void clear(){w._full=wiek=sila=0;} // Something like constructor
+    individual(){ w._full= age= energy=0;}
+    void clear(){w._full=age=energy=0;} // Something like constructor
 };
 
-class swiat
+class world
 {
-indywiduum ziemia[MAX_WORLD_SIDE][MAX_WORLD_SIDE*2];// substrate for individuals
+individual ground[MAX_WORLD_SIDE][MAX_WORLD_SIDE * 2];// substrate for individuals
 unsigned long licznik;			  // simulation step counter
 FILE* log;
 /* METHODS */
@@ -206,58 +204,58 @@ x%=WORLD_SIDE*2;y%=WORLD_SIDE;
 }
 inline void clearPosition(int x, int y);
 inline void clearLine(int xxp, int yyp, int n);
-void krater(int x, int y, int r); // Makes a circular hole in the simulation area
-void wskazniki(); // display of the current values of indicators
-void mapa_taxonow();// display a map of the current taxa
-void caly_ekran();// Restoration of the entire screen, e.g. after changing the display mode.
+void crater(int x, int y, int r); // Makes a circular hole in the simulation area
+void indicators(); // display of the current values of indicators
+void taxa_map();   // display a map of the current taxa
+void entire_screen();// Restoration of the entire screen, e.g. after changing the display mode.
 void init();	  // the initial state of the simulation
-void kataklizm(); // generating a disaster of a specific size
-void krok();	  // next step of simulation
-int  sterowanie();// Possible external control (keyboard)
+void disaster();  // generating a disaster of a specific size
+void step();	  // next step of simulation
+int  control();   // Possible external control (keyboard)
 //void dump();	  // dump the simulation state to a file
 /* CONSTRUCTOR & DESTRUCTOR */
-    swiat(char* logname);
-    ~swiat(){ fclose(log); }
+    world(char* log_name);
+    ~world(){ fclose(log); }
 };
 
 /** PLATFORM INDEPENDENT PART IMPLEMENTATION
  *************************************************/
-void swiat::clearPosition(int x, int y)
+void world::clearPosition(int x, int y)
 {
     torus(x, y);
-    if(!ziemia[y][x].jest_zywy()) return;
-    ziemia[y][x].kill();
-    ziemia[y][x].plot(x,y);
+    if(!ground[y][x].is_alive()) return;
+    ground[y][x].kill();
+    ground[y][x].plot(x,y);
 }
 
-void swiat::clearLine(int xxp, int yyp, int n)
+void world::clearLine(int xxp, int yyp, int n)
 {
 for(int i=xxp;i<xxp+n;i++)
     clearPosition(i, yyp);
 }
 
-swiat::swiat(char* logname)
+world::world(char* log_name)
 {
-log=fopen(logname,"a");
+log=fopen(log_name,"a");
 if(!log)
 	{
-	perror(logname);
+	perror(log_name);
 	exit(2);
 	}
 licznik=0;
 }
 
 /// It displays according to the mode
-void indywiduum::plot(int x,int y)
+void individual::plot(int x, int y)
 {
 int pom;
 switch(plot_mode){
- case 0:pom=w.w.geba; break;
- case 1:pom=w.w.oslona;	break;
- case 2:if(sila) pom=sila/16+1;
+ case 0:pom=w.w.jaws; break;
+ case 1:pom=w.w.shield;	break;
+ case 2:if(energy) pom=energy/16+1;
 	   else pom=0;
 	break;
- case 3:pom=wiek;	break;
+ case 3:pom=age;	break;
  case 4:/* hidden */    return;
  default:
 	fprintf(stderr,"INTERNAL: plot_mode=%d >3\n",plot_mode);
@@ -266,25 +264,25 @@ switch(plot_mode){
 ::plot(x,y,(pom<256?pom:255));
 }
 
-unsigned char indywiduum::tax_val(base2 f)
+unsigned char individual::tax_val(base2 f)
 {
-	if(liczniki[f]==0) return 0;
-	return (unsigned char)(( log10(double(liczniki[f]))/log10(double(max)) ) * 255);
+	if(counters[f]==0) return 0;
+	return (unsigned char)(( log10(double(counters[f]))/log10(double(max)) ) * 255);
 }
 
-inline void indywiduum::tax(base2 f)
+inline void individual::tax(base2 f)
 {
 unsigned x=(f&0xff00)>>8;
 unsigned y=f&0x00ff;
-//assert( y>0 && y<=MAXBASE);
-//assert( x>0 && x<=MAXBASE);
-unsigned char c=indywiduum::tax_val(f);// gęby na x-ach
+//assert( y>0 && y<=MAX_BASE);
+//assert( x>0 && x<=MAX_BASE);
+unsigned char c=individual::tax_val(f);// gęby na x-ach
 if(TAX_OUT==128)
      {  y/=2; }
 ::plot(x,y,c);
 }
 
-void swiat::mapa_taxonow()
+void world::taxa_map()
 {
 unsigned x,y,c;
 for(unsigned i=0;i<256U;i++)
@@ -292,61 +290,61 @@ for(unsigned i=0;i<256U;i++)
      {
      x=j;
      y=i;
-     c=indywiduum::tax_val(x*256+y);// gęby na x-ach
+     c=individual::tax_val(x * 256 + y);// jaws on x's
      if(TAX_OUT==128)
 	  { y/=2; }
      plot(x,y,c);
      }
-indywiduum::max_change=0;// Obraz już aktualny
+    individual::max_change=0;// The screen is up_to_date
 }
 
-void swiat::caly_ekran()
+void world::entire_screen()
 {
 int a,b;
-if(indywiduum::plot_mode==4)
-  mapa_taxonow();
+if(individual::plot_mode == 4)
+  taxa_map();
   else
   {
-  indywiduum::ile_ind=0;
+      individual::count_ind=0;
   for(a=0;a<WORLD_SIDE;a++) // Iterating over successive lines, i.e. after 'y'
 	for(b=0;b<WORLD_SIDE*2;b++) // Iterating over the columns in a row, i.e. x
 		{
-		ziemia[a][b].plot(b,a);
-		if(ziemia[a][b].jest_zywy())
-			indywiduum::ile_ind++;
+		ground[a][b].plot(b,a);
+		if(ground[a][b].is_alive())
+			individual::count_ind++;
 		}
   }
 }
 
-char nazwy[]="GOSWT";// added again in 2021 because it got lost somewhere :-)
+char nazwy[]="JSEAT";// added again in 2021 because it got lost somewhere :-)
 
-void swiat::wskazniki()
+void world::indicators()
 {
 /* Draw a fossil! */
 unsigned x=RANDOM(WORLD_SIDE*2);
 unsigned y=RANDOM(WORLD_SIDE);
 printc(0,textY,0,128,"%c [%lu] IND:%lu TAX:%lu BIG:%lu ",
-	char(nazwy[indywiduum::plot_mode]),
+	char(nazwy[individual::plot_mode]),
 	(unsigned long)licznik,
-	(unsigned long)indywiduum::ile_ind,
-	(unsigned long)indywiduum::ile_tax,
-	(unsigned long)indywiduum::ile_big_tax);
+	(unsigned long)individual::count_ind,
+	(unsigned long)individual::count_tax,
+	(unsigned long)individual::cnt_big_tax);
 if(licznik%LogRatio==0)
   fprintf(log,"%lu\t%lu\t%lu\t%lu\t%u\n",
 	(unsigned long)licznik,
-	(unsigned long)indywiduum::ile_ind,
-	(unsigned long)indywiduum::ile_tax,
-	(unsigned long)indywiduum::ile_big_tax,
-    /* Ważne jest, żeby specjalizacja pokarmowa była istotniejsza od osłony */
-       (unsigned)(( (unsigned)ziemia[y][x].w.w.geba*((unsigned)MAX_BASE+1) )+ziemia[y][x].w.w.oslona)
+	(unsigned long)individual::count_ind,
+	(unsigned long)individual::count_tax,
+	(unsigned long)individual::cnt_big_tax,
+    /* It is important that food specialization takes precedence over shield  */
+       (unsigned)(( (unsigned)ground[y][x].w.w.jaws*((unsigned)MAX_BASE+1) )+ground[y][x].w.w.shield)
        );
-if(indywiduum::plot_mode==4 && indywiduum::max_change)
-	mapa_taxonow();
+if(individual::plot_mode == 4 && individual::max_change)
+	taxa_map();
 }
 
-void swiat::init()
+void world::init()
 {
-ziemia[WORLD_SIDE/2][WORLD_SIDE].init(MAX_BASE2,0xff);
+ground[WORLD_SIDE/2][WORLD_SIDE].init(MAX_BASE2,0xff);
 
 fprintf(log,"%ux%u\tWYP_POT=%f\tEFEKT=%f\tMAX_WIEK=%d\tPLOD=%f\tRTG=%f\tBUM=0.5^%d\n",
 WORLD_SIDE,WORLD_SIDE*2,OFFSPRING_DOWRY,AUTOTROPH_EFFICIENCY,(int)(255-MINIMAL_AGE),1./INFERTILITY,1./RADIATION,DISASTER_EXP);
@@ -357,105 +355,105 @@ fprintf(log,"N#\tIND\tTAX\tBIG\tFOS\n");
 /** THE MOST IMPORTANT FUNCTIONS - IMPLEMENTATION OF THE MAIN SIMULATION IDEA
  * ***************************************************************************/
 
-/// inicjacja nowego indywiduum
-void indywiduum::init(base2 iwfull, unsigned isila)
+/// initiation of a new individual
+void individual::init(base2 initial_pattern, unsigned initial_energy)
 {
-w._full=iwfull;
-sila=isila;
-wiek=MINIMAL_AGE;
+w._full=initial_pattern;
+energy=initial_energy;
+age=MINIMAL_AGE;
 assert(w._full>0);
-// Check if the armor is too good and if the other parameters are OK
-if(w.w.oslona==0 || !jest_zywy())
+// Check if the shield is too good and if the other parameters are OK
+if(w.w.shield==0 || !is_alive())
       {
       clear();
       return;
       }
-ile_ind++;
-iwfull=w.w.geba*256+w.w.oslona;
-liczniki[iwfull]++;
-assert(*(liczniki+iwfull));
-if(liczniki[iwfull]>max)
+count_ind++;
+initial_pattern=w.w.jaws*256+w.w.shield;
+counters[initial_pattern]++;
+assert(*(counters+initial_pattern));
+if(counters[initial_pattern]>max)
 		{
-		max=liczniki[iwfull];
+		max=counters[initial_pattern];
 		max_change=1;
 		}
 if(plot_mode==4)
-	tax(iwfull);            // displaying a taxon
-if( liczniki[iwfull]==1 )   // the first representative of the taxon
-		ile_tax++;          // so the number of taxa increases
-if( liczniki[iwfull]==11 )  // It reached a value of> 10, which is a large taxon - promising
-		ile_big_tax++;
+	tax(initial_pattern);            // displaying a taxon
+if( counters[initial_pattern]==1 )   // the first representative of the taxon
+		count_tax++;                 // so the number of taxa increases
+if( counters[initial_pattern]==11 )  // It reached a value of> 10, which is a large taxon - promising
+		cnt_big_tax++;
 }
 
 /// Killing the individual by the world
-void indywiduum::kill()
+void individual::kill()
 {
-assert(w.w.oslona>0);
+assert(w.w.shield>0);
 assert( w._full>0 );
-ile_ind--;
-base2 wfull=w.w.geba*256+w.w.oslona;
-liczniki[wfull]--;
+count_ind--;
+base2 wfull=w.w.jaws*256+w.w.shield;
+counters[wfull]--;
 if(plot_mode==4)
 	tax(wfull);             // displaying a taxon
-if( liczniki[wfull]==0 )	// This is the last representative of this taxon
-	ile_tax--;              // Thus, the number of taxa is decreasing
-if( liczniki[wfull]==10 )   // It reached the value of <= 10, so it is already a small taxon
-	ile_big_tax--;
+if( counters[wfull]==0 )	// This is the last representative of this taxon
+	count_tax--;            // Thus, the number of taxa is decreasing
+if( counters[wfull]==10 )   // It reached the value of <= 10, so it is already a small taxon
+	cnt_big_tax--;
 assert(w._full>0 );
-w._full=sila=wiek=0;
+w._full=energy=age=0;
 }
 
 /// The initiation of a new individual as a descendant of an existing one
-void indywiduum::init(indywiduum& rodzic)
+void individual::init(individual& parent)
 {
-w._full=kopioj(rodzic.w._full);
-unsigned uposazenie=unsigned(rodzic.sila*OFFSPRING_DOWRY);
-unsigned cena=w.w.geba + (base)(~w.w.oslona) + uposazenie; // Shield 0 is the most expensive
-if( rodzic.sila<=cena ) // There is no energy to have a descendant
+w._full=copy(parent.w._full);
+unsigned dowry=unsigned(parent.energy*OFFSPRING_DOWRY);
+unsigned price=w.w.jaws + (base)(~w.w.shield) + dowry; // Shield 0 is the most expensive
+if( parent.energy<=price ) // There is no energy to have a descendant
 	{ w._full=0; return; }
-rodzic.sila-=cena; 	        // He pays for production and equipment
-assert(rodzic.sila!=0);
-init(w._full,uposazenie);   // The real initiation of the prepared descendant
+parent.energy-=price; 	   // He pays for production and equipment
+assert(parent.energy!=0);
+init(w._full,dowry);       // The real initiation of the prepared descendant
 }
 
 /// Killing the individual by the other with the flow of energy
-void indywiduum::kill(indywiduum& zabojca)
+void individual::kill(individual& killer)
 {
-if(zabojca.sila==0) return; // unable to kill
-assert(w.w.oslona>0);
+if(killer.energy==0) return; // unable to kill
+assert(w.w.shield>0);
 assert(w._full>0);
 /* The killer gets a certain amount of the victim's strength */
 /* proportional to the number of bits of the victim's shield matches his attack mask */
-if(w.w.oslona!=0)
-   if(zabojca.w.w.geba!=0)
-       zabojca.sila+=unsigned(sila *
-    double(w.w.oslona & zabojca.w.w.geba)/(zabojca.w.w.geba)*
-    double(w.w.oslona & zabojca.w.w.geba)/(w.w.oslona)
-    );
-assert(zabojca.sila!=0);
+if(w.w.shield!=0)
+   if(killer.w.w.jaws!=0)
+       killer.energy+=unsigned(energy *
+            double(w.w.shield & killer.w.w.jaws)/(killer.w.w.jaws)*
+            double(w.w.shield & killer.w.w.jaws)/(w.w.shield)
+        );
+assert(killer.energy!=0);
 assert(w._full>0);
 /* Then the victim dies */
 kill();
 }
 
 /// the law of time - everything grows old
-void indywiduum::uplyw_czasu()
+void individual::time_lapse()
 {
-assert(w.w.oslona>0);
+assert(w.w.shield>0);
 assert(w._full>0);
-wiek++;	       // Normal aging
-if(w.w.geba==AUTOTROPH) //IF IS AN  A U T O T R O P H ...
+age++;	       // Normal aging
+if(w.w.jaws==AUTOTROPH) //IF IS AN  A U T O T R O P H ...
 	{
-    sila+=unsigned(100*AUTOTROPH_EFFICIENCY-1);// without a throw, gcc was clinging, and that's how it should be!
-	assert(sila!=0);
+    energy+=unsigned(100*AUTOTROPH_EFFICIENCY-1);// without a throw, gcc was clinging, and that's how it should be!
+	assert(energy!=0);
 	}
 	else
-	sila--;// Metabolic energy consumption
+	energy--; // Metabolic energy consumption
 assert(w._full>0);
 }
 
 /// copying the genotype with a possible mutation
-base2 indywiduum::kopioj(base2 r)
+base2 individual::copy(base2 r)
 {
 base2 mask=( RANDOM(RADIATION) );
 if(mask<=16) // A makeshift - not transferable if base> 16 bit ??? TODO: THIS WAS LONG AGO !!!
@@ -469,7 +467,7 @@ return r;
 struct vector2
 { signed char x,y; };
 
-void swiat::krok()
+void world::step()
 {
 static vector2 kierunki[]={{1,1},{-1,-1},{1,-1},{-1,1},
 			   {0,1},{ 1, 0},{0,-1},{-1,0} };
@@ -481,12 +479,12 @@ for(long i=0;i<ile;i++) // Take a MonteCarlo step
 	unsigned y=RANDOM(WORLD_SIDE);
     if(VisRand)
 		plot(x,y,255+128);// added 09/26/2013 (but what?)
-	if(!ziemia[y][x].jest_zywy()) // this one is dead!
+	if(!ground[y][x].is_alive()) // this one is dead!
 		continue;		// processing of the next one!
-	ziemia[y][x].uplyw_czasu();
-	if(!ziemia[y][x].jest_zywy())  // This one cannot live anymore
+	ground[y][x].time_lapse();
+	if(!ground[y][x].is_alive())  // This one cannot live anymore
 		{
-		ziemia[y][x].kill();
+		ground[y][x].kill();
 		plot(x,y,0);		// blur the point on the screen
 		continue;           // go work on the next one!
 		}
@@ -494,34 +492,34 @@ for(long i=0;i<ile;i++) // Take a MonteCarlo step
 	assert(a<8);
 	unsigned x1=(x+kierunki[a].x) % (WORLD_SIDE*2);
 	unsigned y1=(y+kierunki[a].y) % WORLD_SIDE;
-	if(!ziemia[y1][x1].jest_zywy()) // is this a free seat?
+	if(!ground[y1][x1].is_alive()) // is this a free seat?
 	   {
 	   if(RANDOM(INFERTILITY)==0)   // proliferation
 		{
-		ziemia[y1][x1].init(ziemia[y][x]);
+		ground[y1][x1].init(ground[y][x]);
 		}
 		else			            // displacement
 		{
-		ziemia[y1][x1]=ziemia[y][x];
-		ziemia[y][x].clear();
+		ground[y1][x1]=ground[y][x];
+		ground[y][x].clear();
 		}
-	   ziemia[y1][x1].plot(x1,y1);
-	   ziemia[y][x].plot(x,y);
+	   ground[y1][x1].plot(x1,y1);
+	   ground[y][x].plot(x,y);
 	   }
 	   else  // There is one alive in the randomly selected cell.
-	   if( ziemia[y][x].w.w.geba!=AUTOTROPH && //An attempt is made to eat if the active one is not an autotroph
-	      (ziemia[y1][x1].w.w.oslona & ziemia[y][x].w.w.geba) != 0)
+	   if( ground[y][x].w.w.jaws!=AUTOTROPH && // An attempt is made to eat if the active one is not an autotroph
+	      (ground[y1][x1].w.w.shield & ground[y][x].w.w.jaws) != 0)
 		   {
-		   ziemia[y1][x1].kill(ziemia[y][x]);
+		   ground[y1][x1].kill(ground[y][x]);
 		   plot(x1,y1,0);
 		   }
 	}
-kataklizm(); // one, even a tiny cataclysm at the Monte-Carlo step
+disaster(); // one, even a tiny cataclysm at the Monte-Carlo step
 }
 
 double poison(int n); // generate a para-poison distribution in the range 0..1 with 'n' degrees
 
-void  swiat::kataklizm(void)
+void  world::disaster(void)
 {
 double power;
 int x,y;
@@ -531,7 +529,7 @@ x=RANDOM(WORLD_SIDE*2);
 y=RANDOM(WORLD_SIDE);
 power=poison(DISASTER_EXP);
 assert(power>=0 && power<=1);
-krater(x, y, power * WORLD_SIDE);
+crater(x, y, power * WORLD_SIDE);
 }
 
 
@@ -563,7 +561,7 @@ signal( SIGTERM ,(SIG_TYPE)MySignalHook);
 //signal(  ,MySignalHook());//MORE?
 }
 
-int swiat::sterowanie()
+int world::control()
 {
     int zmieniony=0;
     if(licznik>=MAX_ITERATIONS) return 0;
@@ -571,11 +569,11 @@ int swiat::sterowanie()
     {
         zmieniony=1; // putchar(7);???
         switch(get_char()){
-            case 'g':/* MUG  */ indywiduum::set_mode(0);break;
-            case 'o':/*SHIELD*/ indywiduum::set_mode(1);break;
-            case 's':/*STRENGTH*/indywiduum::set_mode(2);break;
-            case 'w':/*AGE */   indywiduum::set_mode(3);break;
-            case 't':/*TAXs*/   indywiduum::set_mode(4);break;
+            case 'j':/* JAWS  */ individual::set_mode(0);break;
+            case 's':/*SHIELD*/  individual::set_mode(1);break;
+            case 'e':/*STRENGTH*/individual::set_mode(2);break;
+            case 'a':/*AGE */    individual::set_mode(3);break;
+            case 't':/*TAXs*/    individual::set_mode(4);break;
             case '+':VisRand=1;break;
             case '-':VisRand=0;break;
             case 'b':{
@@ -585,7 +583,7 @@ int swiat::sterowanie()
                 assert(y>=0 && y<WORLD_SIDE);
                 double power=DRAND();
                 assert(power>=0 && power<=1);
-                krater(x, y, int(power * WORLD_SIDE));
+                crater(x, y, int(power * WORLD_SIDE));
             }break;
             case 'f':fflush(log);break;
             case -1:
@@ -593,7 +591,7 @@ int swiat::sterowanie()
         }
     }
     if(zmieniony)
-        caly_ekran(); // After changing the mode, you need to renew the whole screen
+        entire_screen(); // After changing the mode, you need to renew the whole screen
     return 1;
 }
 
@@ -601,8 +599,8 @@ int main(int argc,const char* argv[])
 {
 shell_setup("CO-EVOLUTION",argc,argv);
 printf("CO-EVOLUTION: a program that simulates the co-evolution of many species\n");
-printf("COMMANDS: 'g': MUG 'o': SHIELD 's': STRENGTH 'w': AGE 't': TAXES\n"
-              "'b':BOLID   +-:SRC.CLEANING 'f':FLUSH LOG 'q':QUIT\n");
+printf("COMMANDS: 'j':JAWS 's':SHIELD 'e':STRENGTH 'a':AGE 't':TAXES\n"
+              "'b':BOLID  +-:SRC.CLEANING 'f':FLUSH LOG 'q':QUIT\n");
 printf("NUMBER OF POSSIBLE CLONES=%lu MAXINT=%d\n",(unsigned long)MAX_BASE2,MAXINT);
 
 if(!parse_options(argc,argv))
@@ -615,7 +613,7 @@ if(sizeof(base)*2!=sizeof(base2))//static assert wtedy nie istniało
 	exit(1);
 	}
 
-swiat& tenSwiat=*new swiat(LogName);
+world& tenSwiat=*new world(LogName);
 if(&tenSwiat==NULL)
     {
     fprintf(stderr,"No memory!\n");
@@ -627,15 +625,15 @@ RANDOMIZE();
 init_plot( WORLD_SIDE*2+1, textY,0,1); //(WORLD_SIDE*2>256?WORLD_SIDE*2:256) ???
 
 tenSwiat.init();
-tenSwiat.wskazniki();
-tenSwiat.caly_ekran();
+tenSwiat.indicators();
+tenSwiat.entire_screen();
 install_signal_hooks();
 while(1)
 	{
-	tenSwiat.krok();
-	tenSwiat.wskazniki();
+	tenSwiat.step();
+	tenSwiat.indicators();
 	flush_plot();
-	if(!tenSwiat.sterowanie())
+	if(!tenSwiat.control())
 		break;
 	}
 close_plot();
@@ -655,17 +653,17 @@ return pom;
 
 
 /* STATICS */
-unsigned indywiduum::max=0;// what is the largest taxon
-unsigned indywiduum::max_change=0;//... and whether the maximum changed recently
-unsigned indywiduum::plot_mode=0;// what is to be displayed
-unsigned indywiduum::ile_ind=0;// how many living individuals are there
-unsigned indywiduum::ile_tax=0;// how many non-zero taxa
-unsigned indywiduum::ile_big_tax=0;// how many taxa are more than 10
-unsigned indywiduum::liczniki[ (long)(MAX_BASE2+1) ];// Taxa counters
+unsigned individual::max=0;// what is the largest taxon
+unsigned individual::max_change=0;//... and whether the maximum changed recently
+unsigned individual::plot_mode=0;// what is to be displayed
+unsigned individual::count_ind=0;// how many living individuals are there
+unsigned individual::count_tax=0;// how many non-zero taxa
+unsigned individual::cnt_big_tax=0;// how many taxa are more than 10
+unsigned individual::counters[ (long)(MAX_BASE2 + 1) ];// Taxa counters
 
 /** CRATER - TRANSLATED FROM BASIC CODE IMPLEMENTED ELLIPSE DRAWING
-   BASED ON BRESENHAM ALGORITHM                                      */
-void swiat::krater(int x, int y, int r) // Makes a hole in the simulation area
+   BASED ON BRESENHAM ALGORITHM */
+void world::crater(int x, int y, int r) // Makes a hole in the simulation area
 {
 if(r<=1)
 	{ clearPosition(x, y); return; }
