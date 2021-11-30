@@ -1,9 +1,9 @@
 /************************************************************************/
-/*      Definicje programu CLAGEN do przenoszenia DOS<->UNIX            */
-/*     ======================================================           */
-/*  projekt nr 2.5 1994                                                */
+/*     Definicje dla programu CLAGEN do przenoszenia DOS<->UNIX         */
+/*     ========================================================         */
+/*  projekt nr 2.5 1994                                                 */
 /*                                                                      */
-/*    Zaklad Systematyki i Geografii Roslin Instytutu Botaniki UW       */
+/*    Zakład Systematyki i Geografii Roślin Instytutu Botaniki UW       */
 /*                                                                      */
 /*                      Wojciech BORKOWSKI                              */
 /************************************************************************/
@@ -23,7 +23,7 @@
 int init_input_block_switching(); /* Initialization blocking module */
 extern int is_tty;                /* If input is from terminal ==1  */
 void blocking_stdin(/* block */); /* Switching blocking on stdin    */
-int input_char_ready();          /* Return 1 if is char ready to read from stdin */
+int input_char_ready();           /* Return 1 if is char ready to read from stdin */
 #endif
 
 #ifdef unix_BSD_rand
@@ -69,7 +69,7 @@ inline void Randomize(void) { srand((unsigned) time(NULL)); }
 
 #endif
 
-/* USEABLE MACROS */
+/* USABLE MACROS */
 #ifdef unix
 
 #define _SL_STR         "/"

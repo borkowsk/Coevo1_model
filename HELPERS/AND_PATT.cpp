@@ -1,4 +1,4 @@
-/*
+/**
  * MAPA INTERAKCJI - 2D BIT "AND" PATTERN
  * @AUTHOR: Wojciech Borkowski
  */
@@ -22,8 +22,8 @@ for(i=0;i<256U; i++)
 printc(0,256,1,128,"Pattern: x and y");
 }
 
-/*  OGOLNA FUNKCJA MAIN */
-/************************/
+/**  OGÓLNA FUNKCJA MAIN
+ *************************/
 
 main(int argc,const char* argv[])
 {

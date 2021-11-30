@@ -1,5 +1,5 @@
-/*
- * MAPA INTERAKCJI - DRAPIEZNIK/OFIARA DLA COEWOLUCJI
+/**
+ * MAPA INTERAKCJI - DRAPIEŻNIK/OFIARA DLA KOEWOLUCJI
  * @AUTHOR: Wojciech Borkowski
  */
 #include <assert.h>

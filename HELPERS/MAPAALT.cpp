@@ -1,5 +1,5 @@
-/*
- * ALTERNATYWNA MAPA INTERAKCJI - DRAPIEZNIK/OFIARA DLA COEWOLUCJI
+/**
+ * ALTERNATYWNA MAPA INTERAKCJI - DRAPIEŻNIK/OFIARA DLA KOEWOLUCJI
  * @AUTHOR: Wojciech Borkowski
  */
 #include <assert.h>
@@ -8,11 +8,11 @@
 #include <string.h>
 #include "dos&unix.h"
 #include "symshell.h"
-/* Funkcje ustalajace ceny dla "geb" i "oslon" */
+/* Funkcje ustalające ceny dla "gęb" i "osłon" */
 unsigned cena(unsigned char b);
 unsigned  Not(unsigned char b);
 
-/* Tablice na liczniki do srednich */
+/* Tablice na liczniki do średnich */
 long poziom[256];/* suma wierszy */
 long pion[256]; /* suma kolumn */
 
@@ -22,7 +22,7 @@ unsigned int i,j,w;
 unsigned char pom;
  for(i=1;i<256; i++)
     {
-    w=cena(i); // wiersze drukowane w kolejnosci cen
+    w=cena(i); // wiersze drukowane w kolejności cen
     for(j=1;j<256; j++)
 	  {
       pom=(unsigned char)
@@ -56,13 +56,13 @@ for(i=1;i<256; i++)
     }
 }
 
-/*  OGOLNA FUNKCJA MAIN */
-/************************/
+/**  OGÓLNA FUNKCJA MAIN
+ *************************/
 
 main(int argc,const char* argv[])
 {
 shell_setup("ALT. INTERACTION MAP",argc,argv);
-printf("MAPA INTERAKCJI - DRAPIEZNIK/OFIARA DLA COEWOLUCJI\n");
+printf("MAPA INTERAKCJI - DRAPIEŻNIK/OFIARA DLA KOEWOLUCJI\n");
 printf("COLORS= 256 q-quit\n");
 Randomize();
 init_plot(260,260,0,0);
@@ -85,7 +85,7 @@ return 0;
 unsigned cena(unsigned char b)
 {
 unsigned c=0;
-unsigned char mask=0x1;// od tylu - najmlodszy bit jest nawiecej wart!
+unsigned char mask=0x1;// od tyłu - najmłodszy bit jest nawięcej wart! (?)
 for(int i=0;i<8;i++)
 	{
 	c<<=1;

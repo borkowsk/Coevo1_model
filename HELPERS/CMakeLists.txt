@@ -1,16 +1,18 @@
-# CMAKE configuration for COEVO-lution1 helpers aplications
+# CMAKE configuration for COEVO-lution1 helpers applications
 ######################################################################
 # @Author: Wojciech Borkowski
 #
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 2.9)
 
 project(coevolution_helpers)
 
-set(SYMSHELL "../../SymShellLight")
-
-add_subdirectory( ${SYMSHELL} ${SYMSHELL} ) 
-
-include_directories( ${SYMSHELL} )
+if(!SYMSHELL)
+    set(SYMSHELL "../../SymShellLight")
+    add_subdirectory( ${SYMSHELL} ${SYMSHELL} )
+    include_directories( ${SYMSHELL} )
+else()
+    include_directories( "../../SymShellLight" )
+endif()
 
 add_executable( and_pattern
                 AND_PATT.cpp

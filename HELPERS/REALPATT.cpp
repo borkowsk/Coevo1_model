@@ -1,5 +1,5 @@
-/*
- * REALNIE STWIERDZONE KLONY W SYMULACJI - DLA COEWOLUCJI
+/**
+ * REALNIE STWIERDZONE KLONY W SYMULACJI - DLA KOEWOLUCJI
  * @AUTHOR: Wojciech Borkowski
  */
 #include <assert.h>
@@ -32,7 +32,7 @@ typedef unsigned int licznik;
 
 const char* filename=NULL; //Nazwa pliku
 char  opis[1024]; //Opis z pliku
-unsigned char far tab[SIZE][SIZE]; // tablica licznikow
+unsigned char far tab[SIZE][SIZE]; // tablica liczników
 unsigned int Max=2;
 long num=0;
 
@@ -78,8 +78,8 @@ printc(0,SIZE+char_height('X')*2,1,128,"%ld) %ld %ld %ld %ld     \t",
 if(fos!=0)
   {
   fos&=0x0000ffff; //low 16 bits
-  unsigned x=(fos&0xff00)>>8;//geba
-  unsigned y=(fos&0x00ff);//oslona
+  unsigned x=(fos&0xff00)>>8;//gęba
+  unsigned y=(fos&0x00ff);//osłona
   if( y==0 )
 	fprintf(stderr,"Invalid FOS value=%lx (x=%x y=%x)\n",fos,x,y);
 #if SIZE==128
@@ -109,15 +109,15 @@ printc(0,SIZE+char_height('X'),1,128,"%s",opis);
 printc(0,SIZE+char_height('X')*2,1,128,"%ld records             \t",num);
 }
 
-/*  OGOLNA FUNKCJA MAIN */
-/************************/
+/**  OGÓLNA FUNKCJA MAIN
+ *************************/
 
 main(int argc,const char* argv[])
 {
 if(argc<2)
     {
     cout<<"REALNIE STWIERDZONE KLONY W SYMULACJI:\n";
-    cout<<"WYWOLANIE:\n"<<argv[0]<<" coewo.log [opcje]\n";
+    cout<<"WYWOŁANIE:\n"<<argv[0]<<" coewo.log [opcje]\n";
     exit(1);
     }
 filename=argv[1];

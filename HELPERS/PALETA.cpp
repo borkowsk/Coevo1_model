@@ -1,5 +1,5 @@
-/*
- * PALETA KOLORÓW - DLA COEWOLUCJI
+/**
+ * PALETA KOLORÓW - DLA KOEWOLUCJI
  * @AUTHOR: Wojciech Borkowski
  */
 #include <assert.h>
@@ -18,14 +18,14 @@ for(i=0;i<256;i++)
 	  }
 }
 
-/*  OGOLNA FUNKCJA MAIN */
-/************************/
+/**  OGOLNA FUNKCJA MAIN
+ *************************/
 
 main(int argc,const char* argv[])
 {
 shell_setup("COLOR SCALE",argc,argv);
-printf("SKALA KOLOROW DLA SYMULACJI\n");
-printf("ILOSC KOLOROW= 256 q-quit\n");
+printf("SKALA KOLORÓW DLA SYMULACJI\n");
+printf("LICZBA KOLORÓW= 256 q-quit\n");
 Randomize();
 init_plot(256,50,0,0);
 

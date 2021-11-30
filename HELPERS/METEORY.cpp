@@ -1,5 +1,5 @@
-/*
- * SYMULACJA KATASTROF METEORYTOWYCHI - DLA COEWOLUCJI
+/**
+ * SYMULACJA KATASTROF METEORYTOWYCH - DLA KOEWOLUCJI
  * @AUTHOR: Wojciech Borkowski
  */
 #include <assert.h>
@@ -27,10 +27,8 @@ for(i=0;i<SIZE;i++)
 		 Matrix[i][j]=255;
 }
 
-
-
-double poison(int n); // generuje rozklad para-poison w zakresie 0..1 o n stopniach
-void krater(int x,int y,int r,int kolor); // Robi dziure z obszarze symulacji
+double poison(int n); // generuje rozkład para-poison w zakresie 0..1 o n stopniach
+void krater(int x,int y,int r,int kolor); // Robi dziurę w obszarze symulacji
 int WSPOLCZYNNIK=10;
 
 void  next_step(void)
@@ -49,11 +47,11 @@ if(step%100==0)
 }
 
 double poison(int n)
-// generuje rozklad para-poison w zakresie 0..1 o n stopniach
+// generuje rozkład para-poison w zakresie 0..1 o n stopniach
 {
 double pom=1;
 for(int i=1;i<=n;i++)
-	pom*=DRand(); // Mnozenie przez wartosc od 0..1
+	pom*=DRand(); // Mnożenie przez wartość od 0..1
 assert(pom>=0 && pom<=1);
 return pom;
 }
@@ -112,7 +110,7 @@ if(yyp!=yi) // Nowa linia
 	yyp= ys+yi;
 	ClearLine(xxp,yyp,n,color);
 	}
-	else // Uzupelnienie lini o punkty brzezne
+	else // Uzupełnienie linii o punkty brzeżne
 	{
 	xxp=xs+xi;  yyp= ys+yi;
 		ClearPosition(xxp , yyp , color+2 );
@@ -123,7 +121,7 @@ if(yyp!=yi) // Nowa linia
 	xxp=xs-xi;  yyp= ys+yi;
 		ClearPosition(xxp , yyp ,  color+2);
 	}
-yyp=yi; // zapaminetaj do porownania
+yyp=yi; // zapamiętaj do porównania
 BEZRYSOWANIA:
 if(DELTAi<0L) goto _1300;
    else {if(DELTAi==0L)
@@ -138,7 +136,7 @@ if( (DELTAi+DELTAi-a2s)<=0L )
 		goto _1380;
 //continue;
 
-_1240: 			/* krok ukosny */
+_1240: 			/* krok ukośny */
 xi++;
 yi--;
 a2s+=a2+a2;
@@ -164,7 +162,7 @@ return 1;
 }
 
 void krater(int x,int y,int r,int kolor)
-// Robi dziure z obszarze symulacji
+// Robi dziurę w obszarze symulacji
 {
 if(r<=1) ClearPosition(x,y,kolor);
 ClearEllipse(x,y,r,r,kolor);
@@ -183,14 +181,14 @@ printf("RE-PAINT\n");
 fflush(stdout);
 }
 
-/*  OGOLNA FUNKCJA MAIN */
-/************************/
+/**  OGÓLNA FUNKCJA MAIN
+/**************************/
 
 main(int argc,const char* argv[])
 {
 shell_setup("ASTEROIDS BOMBING",argc,argv);
 printf("SYMULACJA KATASTROF METEORYTOWYCH \n");
-printf("PARAMETR (N): Wykladnik rozkladu (0..1)^N    { q-quit }\n");
+printf("PARAMETR (N): Wykładnik rozkładu (0..1)^N    { q-quit }\n");
 
 Randomize();
 
