@@ -59,7 +59,7 @@ for(i=1;i<256; i++)
 /**  OGÓLNA FUNKCJA MAIN
  *************************/
 
-main(int argc,const char* argv[])
+int main(int argc,const char* argv[])
 {
 shell_setup("ALT. INTERACTION MAP",argc,argv);
 printf("MAPA INTERAKCJI - DRAPIEŻNIK/OFIARA DLA KOEWOLUCJI\n");
@@ -73,7 +73,7 @@ while(1)
 char pom=get_char();
 if(pom=='\r')
 	replot();
-   else if(pom=='q') break;
+   else if(pom=='q' || pom==-1) break;
 putchar(pom);
 fflush(stdout);
 }
