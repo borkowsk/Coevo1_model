@@ -1,6 +1,6 @@
 # coevo1.x - model of co-evolution of species
 
-### First version of individual based co-evolution model started ~1993-95
+## First version of individual based co-evolution model started ~1993-95
 
 This was my first own serious simulation model. It was not published anywhere, 
 but was used to obtain a government grant for young researchers that led to version 2. 
@@ -43,14 +43,27 @@ $ ninja
 $ ./coewo1
 ```
 
+## INSTITUTIONS
+
+* 1993-2002, ZAKŁAD SYSTEMATYKI I GEOGRAFII ROŚLIN, Wydział Biologii, Uniwersytet Warszawski: 
+        https://www.biol.uw.edu.pl/jednostki-naukowo-dydaktyczne/instytut-biologii-srodowiskowej/
+        
+* 2002-later, INSTYTUT STUDIÓW SPOŁECZNYCH im. Roberta Zajonca, Uniwersytet Warszawski <br>
+  Robert Zajonc Institute for Social Studies, University of Warsaw:
+        http://iss.uw.edu.pl/
+
 ## Licencing
 
 You can use this software freely for educational and research purposes, 
 but if you feel that it would be appropriate to repay somehow, please 
 finance me a big coffee :-)
 
-COFFEE 
+## COFFEE 
+
+<img src="https://pngimg.com/uploads/mug_coffee/mug_coffee_PNG97418.png" alt="drawing" width="100"/> 
+
 https://www.buymeacoffee.com/wborkowsk 
+
 https://www.paypal.com/paypalme/wborkowsk
 
 --------------------------------------------------------

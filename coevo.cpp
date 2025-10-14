@@ -32,9 +32,9 @@
 #endif
 
 #ifdef unix
-const unsigned MAX_WORLD_SIDE=300;// Longer side of the rectangular world
-const unsigned TAX_OUT=256;// How many taxa are displayed on the taxa map.
-                           // Once upon a time, 256 might not have been fit, and it was 128
+const unsigned MAX_WORLD_SIDE=300; ///< Longer side of the rectangular world
+const unsigned TAX_OUT=256; ///< How many taxa are displayed on the taxa map.
+                            ///< Once upon a time, 256 might not have been fit, and it was 128
 #else
 const unsigned MAX_WORLD_SIDE = 100; // The world is a torus with the circumference of the meridian = BOX FLOWER
                     // Old problems with the Borland compiler :-)
@@ -43,8 +43,8 @@ const unsigned TAX_OUT = 101;
                     // 101 low-migration effect, rand (?) Artifact
 #endif
 
-unsigned long    MAX_ITERATIONS=0xffffffff; // the greatest number of iterations
-unsigned int     WORLD_SIDE=MAX_WORLD_SIDE; // ACTUALLY USED SIDE OF THE WORLD
+unsigned long    MAX_ITERATIONS=0xffffffff; ///< the greatest number of iterations
+unsigned int     WORLD_SIDE=MAX_WORLD_SIDE; ///< ACTUALLY USED SIDE OF THE WORLD
 
 /// The most important parameters of the model
 int              DISASTER_EXP=10;  // Exponent of disaster size distribution

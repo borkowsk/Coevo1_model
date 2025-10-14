@@ -8,7 +8,7 @@ cmake_minimum_required(VERSION 2.9)
 
 project(coevolution1)
 
-set(SYMSHELL "../SymShellLight")
+set(SYMSHELL "../../public/SymShellLight")
 add_subdirectory( ${SYMSHELL} ${SYMSHELL} )
 if(WITHTOOLS)
    add_subdirectory( HELPERS/ )
