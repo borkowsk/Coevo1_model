@@ -33,14 +33,23 @@ Then go into _Coevo/_ directory, and, if you have *CMake* installed, run:
   $ make
   $ ./coevo1
 ```
+Or...
+
+```console
+  $ mkdir build
+  $ cd build
+  $ cmake ../ -B./
+  $ ./coewo1
+```
+
 Or, if you have *Ninja* installed do better:
 
 ```console
-$ mkdir Ninja-make
-$ cd  Ninja-make
-$ cmake ../ -G Ninja
-$ ninja
-$ ./coewo1
+  $ mkdir Ninja-make
+  $ cd  Ninja-make
+  $ cmake ../ -G Ninja
+  $ ninja
+  $ ./coewo1
 ```
 
 ## INSTITUTIONS
