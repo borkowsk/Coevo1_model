@@ -1,11 +1,12 @@
 # CMAKE configuration for COEVO-lution1 simulation project (from 20th cent.!)
 #############################################################################
 # @author: Wojciech Borkowski
-# @date: 2024-02-09 (last modifications)
+# @date: 2025-10-14 (last modifications)
 #
 project(coevolution1)
 cmake_minimum_required(VERSION 2.9)
 set(CMAKE_CXX_STANDARD 11) # See: https://matgomes.com/setting-cpp-standard-cmake/
+message(${PROJECT_NAME} ": top directory is ${coevolution1_SOURCE_DIR}.")
 
 # Define WITHTOOLS if you want build helpers applications!
 set(WITHTOOLS true)
@@ -26,8 +27,23 @@ else()
 endif()
 
 # SymShellLight library is required for compilation. 
-# Enter path here.
-set(SYMSHELL "../SymShellLight")
+if(EXISTS "../SymShellLight")
+     get_filename_component(SYMSHELL "${coevolution1_SOURCE_DIR}/../SymShellLight" ABSOLUTE)
+elseif(EXISTS "../symShellLight")
+     get_filename_component(SYMSHELL "${coevolution1_SOURCE_DIR}/../symShellLight" ABSOLUTE)  
+elseif(EXISTS "../../public/SymShellLight")
+     get_filename_component(SYMSHELL "${coevolution1_SOURCE_DIR}/../../public/SymShellLight" ABSOLUTE)    
+elseif(EXISTS "../../public/symShellLight")
+     get_filename_component(SYMSHELL "${coevolution1_SOURCE_DIR}/../../public/symShellLight" ABSOLUTE)
+elseif(EXISTS "../../../public/SymShellLight")
+     #set(SYMSHELL "${coevolution1_SOURCE_DIR}/../../public/SymShellLight")    
+     get_filename_component(SYMSHELL "${coevolution1_SOURCE_DIR}/../../public/SymShellLight" ABSOLUTE)
+elseif(EXISTS "../../../public/symShellLight")
+     get_filename_component(SYMSHELL "${coevolution1_SOURCE_DIR}/../../public/symShellLight" ABSOLUTE)               
+else()
+     message(FATAL_ERROR  ${PROJECT_NAME} ": SymShell sources not found!")
+endif()          
+message(${PROJECT_NAME} ": SymShell used from ${SYMSHELL}.")
 
 add_subdirectory( ${SYMSHELL} ${SYMSHELL} )
 if(WITHTOOLS)
@@ -44,7 +60,7 @@ if(X11) # only for X11 LIB
     add_definitions( -DHAVE_X11 -DUSE_X11 )
     target_link_libraries( coevo1 
          "-L${SYMSHELL}"
-         wbsyshX11 
+         wbsyshLight
          X11 Xpm
          rt
          )

@@ -1,7 +1,7 @@
 # CMAKE configuration for COEVO-lution1 helpers applications  (from 20th cent.!)
 ################################################################################
 # @author: Wojciech Borkowski
-# @date: 2024-02-09 (last modifications)
+# @date: 2025-10-14 (last modifications)
 #
 project(coevolution_helpers)
 cmake_minimum_required(VERSION 2.9)
@@ -27,7 +27,7 @@ if(!SYMSHELL)
     add_subdirectory( ${SYMSHELL} ${SYMSHELL} )
     include_directories( ${SYMSHELL} )
 else()
-    include_directories( "../../SymShellLight" )
+    include_directories( ${SYMSHELL} )
 endif()
 
 add_executable( and_pattern
@@ -62,43 +62,43 @@ if(X11) # only for X11 LIB
     add_definitions( -DHAVE_X11 -DUSE_X11 )
     target_link_libraries( and_pattern 
          "-L${SYMSHELL}"
-         wbsyshX11 X11 Xpm
+         wbsyshLight X11 Xpm
          rt
          )
 
     target_link_libraries( mapa_alt 
          "-L${SYMSHELL}"
-         wbsyshX11 X11 Xpm
+         wbsyshLight X11 Xpm
          rt
          )
 
     target_link_libraries( mapa_not 
          "-L${SYMSHELL}"
-         wbsyshX11 X11 Xpm
+         wbsyshLight X11 Xpm
          rt
          )
 
     target_link_libraries( mapa_patt 
          "-L${SYMSHELL}"
-         wbsyshX11 X11 Xpm
+         wbsyshLight X11 Xpm
          rt
          )
 
     target_link_libraries( meteory 
          "-L${SYMSHELL}"
-         wbsyshX11 X11 Xpm
+         wbsyshLight X11 Xpm
          rt
          )
 
     target_link_libraries( paleta 
          "-L${SYMSHELL}"
-         wbsyshX11 X11 Xpm
+         wbsyshLight X11 Xpm
          rt
          )
 
     target_link_libraries( realpatt 
          "-L${SYMSHELL}"
-         wbsyshX11 X11 Xpm
+         wbsyshLight X11 Xpm
          rt
          )
 endif(X11)
