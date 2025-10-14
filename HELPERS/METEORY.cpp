@@ -29,7 +29,7 @@ for(i=0;i<SIZE;i++)
 
 double poison(int n); // generuje rozkład para-poison w zakresie 0..1 o n stopniach
 void krater(int x,int y,int r,int kolor); // Robi dziurę w obszarze symulacji
-int WSPOLCZYNNIK=10;
+int WSPOLCZYNNIK=8;
 
 void  next_step(void)
 {
@@ -122,6 +122,7 @@ if(yyp!=yi) // Nowa linia
 		ClearPosition(xxp , yyp ,  color+2);
 	}
 yyp=yi; // zapamiętaj do porównania
+
 BEZRYSOWANIA:
 if(DELTAi<0L) goto _1300;
    else {if(DELTAi==0L)
@@ -184,11 +185,11 @@ fflush(stdout);
 /**  OGÓLNA FUNKCJA MAIN
 /**************************/
 
-main(int argc,const char* argv[])
+int main(int argc,const char* argv[])
 {
 shell_setup("ASTEROIDS BOMBING",argc,argv);
 printf("SYMULACJA KATASTROF METEORYTOWYCH \n");
-printf("PARAMETR (N): Wykładnik rozkładu (0..1)^N    { q-quit }\n");
+printf("PARAMETR (N) ~intensywnosc (0..1)^N    { q-quit }\n");
 
 Randomize();
 
@@ -209,7 +210,7 @@ while(input_ready())
 	if(pom=='\r')
 		replot();
    		else
-   		if(pom=='q')
+   		if(pom=='q' || pom==-1)
 	  		goto EXIT;
 
 	}

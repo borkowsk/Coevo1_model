@@ -5,29 +5,26 @@
 #include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <math.h>
-#ifdef unix
-#include <unistd.h>
-#else
-#include <dos.h>
-#endif
 #include <string.h>
 #include <iostream>
 #include <fstream>
+#include <math.h>
 
 using namespace std;
 
 #include "dos&unix.h"
+
 #include "symshell.h"
 
 #ifdef  __TURBOC__
+// VERY OLD. MAYBE STILL USEABLE IN DOSBOX!
 #define  SIZE 128U
 #define MAXLICZNIK 255
 typedef unsigned char licznik;
 #else
 #define  SIZE 256U
-#define MAXLICZNIK (MAXINT)
-typedef unsigned int licznik;
+#define  MAXLICZNIK (MAXINT)
+typedef  unsigned int licznik;
 #endif
 
 const char* filename=NULL; //Nazwa pliku
@@ -67,7 +64,7 @@ void load_next_record(istream& in)
 unsigned long pop,tax,big,fos;
 if(pEOF(in))
 	{
-	sleep(0);
+	delay_ms(0);
 	return;
 	}
 in>>num>>pop>>tax>>big>>fos;
@@ -112,15 +109,18 @@ printc(0,SIZE+char_height('X')*2,1,128,"%ld records             \t",num);
 /**  OGÓLNA FUNKCJA MAIN
  *************************/
 
-main(int argc,const char* argv[])
+int main(int argc, const char* argv[])
 {
-if(argc<2)
-    {
-    cout<<"REALNIE STWIERDZONE KLONY W SYMULACJI:\n";
-    cout<<"WYWOŁANIE:\n"<<argv[0]<<" coewo.log [opcje]\n";
-    exit(1);
-    }
-filename=argv[1];
+if (argc < 2)
+{
+    cout << "REALNIE STWIERDZONE KLONY W SYMULACJI:\n";
+    cout << "URUCHAMIANIE:\n" << argv[0] << " logFileFromCOEVO1.log [opcje]\n";
+    filename = "coevo.log";
+}
+else
+{
+    filename = argv[1];
+}
 ifstream input(filename);
 if(!input.good())
     {
@@ -144,7 +144,7 @@ if(input_ready())
   pom=get_char();
   if(pom=='\r')
       replot();
-  else if(pom=='q') break;
+  else if(pom=='q'||pom==-1) break;
   }
 load_next_record(input);
 flush_plot();

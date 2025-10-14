@@ -9,9 +9,31 @@
 /************************************************************************/
 /* DOS keyword */
 #include <time.h>
-#include <values.h>
 
-#if defined( unix ) || defined( GNUC )
+#if defined( unix )
+// Library effective with Linux
+#include <unistd.h>
+#include <stdlib.h>
+#elif defined(WIN32)
+// Under Windows there is no 'unistd.h'
+#include <stdlib.h>
+#else
+#include <dos.h>
+#endif
+
+#if defined( unix ) || defined( GNUC ) || defined(WIN32)
+#include <limits.h>
+#else
+#include <values.h>
+#endif
+
+#if defined(MAXINT)
+#pragma warning( "MAXINT already defined!" )
+#else
+#define  MAXINT INT_MAX
+#endif
+
+#if defined( unix ) || defined( GNUC ) || defined(WIN32)
 #define far
 #define near
 #define huge
@@ -70,57 +92,53 @@ inline void Randomize(void) { srand((unsigned) time(NULL)); }
 #endif
 
 /* USABLE MACROS */
-#ifdef unix
-
+#if defined(unix) || defined(GNUC) || defined(WIN32)
+// STANDARD CONSOLE STUFF
 #define _SL_STR         "/"
 #define _SL_C           '/'
-#define NEWTEXTPAGE putchar('\f');
-#define CLRSCR      putchar('\f');
-#define DELLINE     putchar(12);
-#define PENTER      "(press RETURN)"
-#define PAUSE      { fprintf(stderr,PENTER);gets(); }
-#define STOP    {error(__FILE__,__LINE__,"STOP",-10);}
+#define NEWTEXTPAGE  putchar('\f');
+#define CLRSCR       putchar('\f');
+#define DELLINE      putchar(12);
+#define PENTER       "(press RETURN)"
+#define PAUSE		 { fprintf(stderr,PENTER);gets(); }
+#define STOP		 {error(__FILE__,__LINE__,"STOP",-10);}
 
 #else
+// BORLAND STUFF FOR DOS!
 #include <conio.h>
 #define _SL_STR         "\\"
 #define _SL_C           '\\'
-#define PRINTF      printf
-#define NEWTEXTPAGE gotoxy(1,1)
-#define CLRSCR      clrscr()
-#define DELLINE    {gotoxy(1,wherey());}
-#define PENTER          "(press ENTER)"
-#define PAUSE      {PRINTF(PENTER);getch(); }
+#define PRINTF       printf
+#define NEWTEXTPAGE  gotoxy(1,1)
+#define CLRSCR       clrscr()
+#define DELLINE      {gotoxy(1,wherey());}
+#define PENTER       "(press ENTER)"
+#define PAUSE        {PRINTF(PENTER);getch(); }
 extern int pass_value;
 #define STOP    {fprintf(stderr,"Blad w %s %d!\n Ctrl-break - koniec q-dalej\n",__FILE__,__LINE__);  \
 		 do{                  \
 		 if(kbhit()) pass_value=getch();}\
 		 while(pass_value!='q');         \
 		 pass_value='\0'; }
+
 #endif
 
 
+#if defined(DEBUG)
 
-#ifdef DEBUG
-
-#       ifdef unix
-
-#define HTEST
-
-#       else
-
-#define HTEST if(heapcheck()<0) {fprintf(stderr," Fatal: Heap corrupted ! %s ,%d\n",__FILE__,__LINE__);abort(); }
-int heapcheck(void);
-
-#       endif
+	#if defined(__TURBOC__)
+	// VERY OLD. MAYBE STILL USEABLE IN DOSBOX! DEBUG
+	#define HTEST if(heapcheck()<0) {fprintf(stderr," Fatal: Heap corrupted ! %s ,%d\n",__FILE__,__LINE__);abort(); }
+	int heapcheck(void);
+	#endif
 
 #define PTEST( _P_ ) if((_P_)==NULL){ fprintf(stderr,"Fatal: NULL use !   %s,%d\n",__FILE__,__LINE__);abort(); }
 
 #else
 
 /* NO DEBUG */
-#define HTEST
-#define PTEST( _P_ )
+#define HTEST			{}
+#define PTEST( _P_ )    {}
 
 #endif
 

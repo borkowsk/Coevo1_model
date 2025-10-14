@@ -21,7 +21,7 @@ for(i=0;i<256;i++)
 /**  OGOLNA FUNKCJA MAIN
  *************************/
 
-main(int argc,const char* argv[])
+int main(int argc,const char* argv[])
 {
 shell_setup("COLOR SCALE",argc,argv);
 printf("SKALA KOLORÓW DLA SYMULACJI\n");
@@ -34,7 +34,7 @@ while(1)
 char pom=get_char();
 if(pom=='\r')
 	replot();
-   else if(pom=='q') break;
+   else if(pom=='q'||pom==-1) break;
 }
 
 close_plot();
