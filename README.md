@@ -71,9 +71,10 @@ finance me a big coffee :-)
 
 <img src="https://pngimg.com/uploads/mug_coffee/mug_coffee_PNG97418.png" alt="drawing" width="100"/> 
 
-https://www.buymeacoffee.com/wborkowsk 
+[PayPal](https://www.paypal.com/paypalme/wborkowsk)
+[buycoffee.to](https://buycoffee.to/adalbertus)
 
-https://www.paypal.com/paypalme/wborkowsk
+
 
 --------------------------------------------------------
 Base directory: https://github.com/borkowsk/Coevo1_model
