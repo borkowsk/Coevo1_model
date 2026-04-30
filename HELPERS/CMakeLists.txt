@@ -1,7 +1,7 @@
 # CMAKE configuration for COEVO-lution1 helpers applications  (from 20th cent.!)
 ################################################################################
 # @author Wojciech Borkowski
-# @date: 2025-10-14 (last modifications)
+# @date: 2026 (last modifications)
 #
 cmake_minimum_required(VERSION 3.30)
 

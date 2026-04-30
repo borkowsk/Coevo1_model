@@ -19,5 +19,8 @@ rm -f *.cbp
 rm -Rf CMakeFiles/
 rm -Rf bin/CMakeFiles/
 rm -Rf cmake-build-*/
+rm -Rf build/
+rm -Rf HELPERS/CMakeFiles/
+
 
 

@@ -32,11 +32,6 @@
 *.out
 *.app
 
-# Linux executables - specific for this repository
-*X11
-*SVG
-TESTS/RawTests/native/native
-
 
 # IDE configs or cmake temporaries
 *.cmake
@@ -50,3 +45,4 @@ CMake-make/*
 SymShellLight/*
 .idea/*
 .qtcreator.err
+clean_list.txt
