@@ -1,0 +1,23 @@
+#!/bin/bash
+# @date 2026-04-29 (last update)
+
+if [ $# -ne 0 ]; 
+then
+   echo "No parameters expected!" 1>&2
+   exit -1
+fi
+
+echo "Cleaning cmake files!"
+echo "Cleaning current directoryfrom cmake files!" `date` >> clean_list.txt
+
+rm -f CMakeCache.txt
+rm -f CMakeLists.txt.user
+rm -f Makefile
+rm -f cmake_install.cmake
+rm -f *.cbp
+
+rm -Rf CMakeFiles/
+rm -Rf bin/CMakeFiles/
+rm -Rf cmake-build-*/
+
+
