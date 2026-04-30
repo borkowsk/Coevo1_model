@@ -1,6 +1,6 @@
-/**
- * MAPA INTERAKCJI - DRAPIEŻNIK/OFIARA DLA KOEWOLUCJI
- * @AUTHOR: Wojciech Borkowski
+/** @file
+ * @brief MAPA INTERAKCJI - DRAPIEŻNIK/OFIARA DLA KOEWOLUCJI
+ * @author Wojciech Borkowski
  */
 #include <assert.h>
 #include <stdio.h>
@@ -8,6 +8,7 @@
 #include <string.h>
 #include "dos&unix.h"
 #include "symshell.h"
+
 /* Funkcje ustalajace ceny dla "geb" i "oslon" */
 unsigned cena(unsigned char b);
 unsigned  Not(unsigned char b);

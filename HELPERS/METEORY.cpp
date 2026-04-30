@@ -1,6 +1,6 @@
-/**
- * SYMULACJA KATASTROF METEORYTOWYCH - DLA KOEWOLUCJI
- * @AUTHOR: Wojciech Borkowski
+/** @file
+ * @brief SYMULACJA KATASTROF METEORYTOWYCH - DLA KOEWOLUCJI
+ * @author Wojciech Borkowski
  */
 #include <assert.h>
 #include <stdio.h>

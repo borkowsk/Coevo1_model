@@ -1,5 +1,6 @@
-/* INTERFACE DO ROZMAITYCH GENERATOROW LICZB PSEUDOLOSOWYCH */
-/*----------------------------------------------------------*/
+/** @file
+ * @brief INTERFACE DO ROZMAITYCH GENERATOROW LICZB PSEUDOLOSOWYCH */
+/*-----------------------------------------------------------------*/
 /* USES_RANDG - Random generator writed in C based on "Numerical Recipes" */
 /* USES_BSD_RANDOM - Random generator from BSD UNIX  */
 /* USES_SVR4_RANDOM - Random generator from System V UNIX */

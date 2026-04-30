@@ -1,6 +1,6 @@
-/**
- * REALNIE STWIERDZONE KLONY W SYMULACJI - DLA KOEWOLUCJI
- * @AUTHOR: Wojciech Borkowski
+/** @file
+ * @brief REALNIE STWIERDZONE KLONY W SYMULACJI - DLA KOEWOLUCJI
+ * @author Wojciech Borkowski
  */
 #include <assert.h>
 #include <stdio.h>

@@ -1,6 +1,6 @@
-/**
- * PALETA KOLORÓW - DLA KOEWOLUCJI
- * @AUTHOR: Wojciech Borkowski
+/** @file
+ * @brief PALETA KOLORÓW - DLA KOEWOLUCJI
+ * @author Wojciech Borkowski
  */
 #include <assert.h>
 #include <stdio.h>

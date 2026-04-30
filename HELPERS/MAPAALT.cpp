@@ -1,6 +1,6 @@
 /**
  * ALTERNATYWNA MAPA INTERAKCJI - DRAPIEŻNIK/OFIARA DLA KOEWOLUCJI
- * @AUTHOR: Wojciech Borkowski
+ * @author Wojciech Borkowski
  */
 #include <assert.h>
 #include <stdio.h>

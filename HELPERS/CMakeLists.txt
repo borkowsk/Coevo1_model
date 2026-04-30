@@ -1,10 +1,11 @@
 # CMAKE configuration for COEVO-lution1 helpers applications  (from 20th cent.!)
 ################################################################################
-# @author: Wojciech Borkowski
+# @author Wojciech Borkowski
 # @date: 2025-10-14 (last modifications)
 #
+cmake_minimum_required(VERSION 3.30)
+
 project(coevolution_helpers)
-cmake_minimum_required(VERSION 2.9)
 set(CMAKE_CXX_STANDARD 11) # See: https://matgomes.com/setting-cpp-standard-cmake/
 
 IF (WIN32)
@@ -60,82 +61,68 @@ add_executable( realpatt
 
 if(X11) # only for X11 LIB
     add_definitions( -DHAVE_X11 -DUSE_X11 )
-    target_link_libraries( and_pattern 
-         "-L${SYMSHELL}"
+    target_link_libraries( and_pattern
          wbsyshLight X11 Xpm
          rt
          )
 
-    target_link_libraries( mapa_alt 
-         "-L${SYMSHELL}"
+    target_link_libraries( mapa_alt
          wbsyshLight X11 Xpm
          rt
          )
 
-    target_link_libraries( mapa_not 
-         "-L${SYMSHELL}"
+    target_link_libraries( mapa_not
          wbsyshLight X11 Xpm
          rt
          )
 
-    target_link_libraries( mapa_patt 
-         "-L${SYMSHELL}"
+    target_link_libraries( mapa_patt
          wbsyshLight X11 Xpm
          rt
          )
 
-    target_link_libraries( meteory 
-         "-L${SYMSHELL}"
+    target_link_libraries( meteory
          wbsyshLight X11 Xpm
          rt
          )
 
-    target_link_libraries( paleta 
-         "-L${SYMSHELL}"
+    target_link_libraries( paleta
          wbsyshLight X11 Xpm
          rt
          )
 
-    target_link_libraries( realpatt 
-         "-L${SYMSHELL}"
+    target_link_libraries( realpatt
          wbsyshLight X11 Xpm
          rt
          )
 endif(X11)
 
 if(WINDOWS) # only for WINDOWS - NOT TESTED IN THIS VERSION (after 2016)
-    target_link_libraries( and_pattern 
-         "-L${SYMSHELL}"
+    target_link_libraries( and_pattern
          wbsyshLight
          )
 
-    target_link_libraries( mapa_alt 
-         "-L${SYMSHELL}"
+    target_link_libraries( mapa_alt
          wbsyshLight
          )
 
-    target_link_libraries( mapa_not 
-         "-L${SYMSHELL}"
+    target_link_libraries( mapa_not
          wbsyshLight
          )
 
-    target_link_libraries( mapa_patt 
-         "-L${SYMSHELL}"
+    target_link_libraries( mapa_patt
          wbsyshLight
          )
 
-    target_link_libraries( meteory 
-         "-L${SYMSHELL}"
+    target_link_libraries( meteory
          wbsyshLight
          )
 
-    target_link_libraries( paleta 
-         "-L${SYMSHELL}"
+    target_link_libraries( paleta
          wbsyshLight
          )
 
-    target_link_libraries( realpatt 
-         "-L${SYMSHELL}"
+    target_link_libraries( realpatt
          wbsyshLight
          )
 endif(WINDOWS)

@@ -1,6 +1,6 @@
-/**
- * MAPA INTERAKCJI - 2D BIT "AND" PATTERN
- * @AUTHOR: Wojciech Borkowski
+/** @file
+ * @brief MAPA INTERAKCJI - 2D BIT "AND" PATTERN.
+ * @author Wojciech Borkowski
  */
 #include <assert.h>
 #include <stdio.h>

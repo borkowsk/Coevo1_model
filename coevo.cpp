@@ -1,13 +1,13 @@
-/**
-  * COEVOLUTIONS v1 simulator revisited after 2010 and in year 2021 to ensure compilability.
-  * Brief description of the operation of the model below.
+/** @file
+  * @brief COEVOLUTIONS v1 simulator revisited after 2010 and in year 2021,2026 to ensure compilability.
+  * Short description of the operation of the model is below.
   * (A detailed description can be found in the papers)
   * - Each individual has its own nutrition and bit pattern
   * - bit pattern for cover / defense strategy.
   * - If ATTACKED.SHIELD and ATTACKER.JAWS > 0 then
   * - the attack was successful and
   * - there will be an energy transfer proportional to the similarity of the masks
-  * Individuals reproduce at the expense of free space and accumulated energy
+  * Individuals reproduce at the expense of free space and accumulated energy.
   * Own movements, the victim of the attack and the moment of reproduction are selected
   * randomly so as not to obscure the model with additional parameters.
  */
@@ -33,8 +33,8 @@
 
 #ifdef unix
 const unsigned MAX_WORLD_SIDE=300; ///< Longer side of the rectangular world
-const unsigned TAX_OUT=256; ///< How many taxa are displayed on the taxa map.
-                            ///< Once upon a time, 256 might not have been fit, and it was 128
+const unsigned TAX_OUT=256;        ///< How many taxa are displayed on the taxa map.
+                                   ///< Once upon a time, 256 might not have been fit, and it was 128
 #else
 const unsigned MAX_WORLD_SIDE = 100; // The world is a torus with the circumference of the meridian = BOX FLOWER
                     // Old problems with the Borland compiler :-)
@@ -46,32 +46,33 @@ const unsigned TAX_OUT = 101;
 unsigned long    MAX_ITERATIONS=0xffffffff; ///< the greatest number of iterations
 unsigned int     WORLD_SIDE=MAX_WORLD_SIDE; ///< ACTUALLY USED SIDE OF THE WORLD
 
-/// The most important parameters of the model
-int              DISASTER_EXP=10;  // Exponent of disaster size distribution
-double AUTOTROPH_EFFICIENCY=0.99;  // The efficiency of autotrophy, which is
-                                   // how much light the autotrophs use
-const double     OFFSPRING_DOWRY=0.1;// what part of the strength/energy
-                                     // should be given to the offspring - the dowry of the offspring
-const unsigned   MINIMAL_AGE=155;    // It is born with this "age". He has a 255-MINIMUM_Age until his death
-const unsigned   INFERTILITY=10;     // The probability of breeding is 1 / INFERTILITY
-const unsigned   RADIATION=160; // Every how many copied bits there is a mutation,
+// The most important parameters of the model:
+int              DISASTER_EXP=10;     ///<  Exponent of disaster size distribution.
+double AUTOTROPH_EFFICIENCY=0.99;     ///<  The efficiency of autotrophy, which is
+                                      ///<  how much light the autotrophs use.
+const double     OFFSPRING_DOWRY=0.1; ///<  what part of the strength/energy
+                                      ///<  should be given to the offspring - the dowry of the offspring.
+const unsigned   MINIMAL_AGE=155;     ///<  It is born with this "age". He has a 255-MINIMUM_Age until his death.
+const unsigned   INFERTILITY=10;      ///<  The probability of breeding is 1 / INFERTILITY.
+const unsigned   RADIATION=160;       ///<  Every how many copied bits there is a mutation.
 
 /* SIZE OF TYPE 'base' DECIDES THE POSSIBLE WORLD COMPLICATION */
 /* THERE ARE AS MANY POSSIBLE TAXA AS MANY BIT PATTERNS IN base2 */
-typedef unsigned char base;   // must be unsigned
-typedef unsigned short base2; // must fit 2 * base
+typedef unsigned char  base;          ///<  must be unsigned.
+typedef unsigned short base2;         ///<  must fit 2 of bases.
+
 const int   MAXINT=0x1fffffffL;
 const base2 MAX_BASE2=(base2)0xffffffffL;
 const base  MAX_BASE =(base)MAX_BASE2;
-const base  AUTOTROPH=MAX_BASE;// the bit pattern of the autotrophy that the world itself feeds (does not have to hunt)
+const base  AUTOTROPH=MAX_BASE; ///<  the bit pattern of the autotrophy that the world itself feeds (does not have to hunt).
 
 // Purely technical
-unsigned int     textY=(WORLD_SIDE>TAX_OUT?WORLD_SIDE:TAX_OUT);// BEGINNING OF STATUS LINE
-unsigned int     VisRand=0;        // Do you want to show the background of the randomizer (??? 2013)
-unsigned int     LogRatio=10;      // How many steps do we need to log?
+unsigned int     textY=(WORLD_SIDE>TAX_OUT?WORLD_SIDE:TAX_OUT); ///<  BEGINNING OF STATUS LINE.
+unsigned int     VisRand=0;        ///<  Do you want to show the background of the randomizer (??? 2013)...
+unsigned int     LogRatio=10;      ///<  How many steps do we need to log?
 char             LogName[128]="coewo.log";
 
-/** Platform independent part
+/* Platform independent part
  **********************************/
 
 int parse_options(int argc,const char* argv[])
@@ -218,8 +219,9 @@ int  control();   // Possible external control (keyboard)
     ~world(){ fclose(log); }
 };
 
-/** PLATFORM INDEPENDENT PART IMPLEMENTATION
+/* PLATFORM INDEPENDENT PART IMPLEMENTATION
  *************************************************/
+
 void world::clearPosition(int x, int y)
 {
     torus(x, y);
@@ -245,7 +247,7 @@ if(!log)
 licznik=0;
 }
 
-/// It displays according to the mode
+/// It displays according to the mode.
 void individual::plot(int x, int y)
 {
 int pom;
@@ -352,10 +354,10 @@ fprintf(log,"N#\tIND\tTAX\tBIG\tFOS\n");
 }
 
 
-/** THE MOST IMPORTANT FUNCTIONS - IMPLEMENTATION OF THE MAIN SIMULATION IDEA
+/* THE MOST IMPORTANT FUNCTIONS - IMPLEMENTATION OF THE MAIN SIMULATION IDEA
  * ***************************************************************************/
 
-/// initiation of a new individual
+/// initiation of a new individual.
 void individual::init(base2 initial_pattern, unsigned initial_energy)
 {
 w._full=initial_pattern;
@@ -385,7 +387,7 @@ if( counters[initial_pattern]==11 )  // It reached a value of> 10, which is a la
 		cnt_big_tax++;
 }
 
-/// Killing the individual by the world
+/// Killing the individual by the world.
 void individual::kill()
 {
 assert(w.w.shield>0);
@@ -403,7 +405,7 @@ assert(w._full>0 );
 w._full=energy=age=0;
 }
 
-/// The initiation of a new individual as a descendant of an existing one
+/// The initiation of a new individual as a descendant of an existing one.
 void individual::init(individual& parent)
 {
 w._full=copy(parent.w._full);
@@ -416,7 +418,7 @@ assert(parent.energy!=0);
 init(w._full,dowry);       // The real initiation of the prepared descendant
 }
 
-/// Killing the individual by the other with the flow of energy
+/// Killing the individual by the other with the flow of energy.
 void individual::kill(individual& killer)
 {
 if(killer.energy==0) return; // unable to kill
@@ -436,7 +438,7 @@ assert(w._full>0);
 kill();
 }
 
-/// the law of time - everything grows old
+/// the law of time - everything grows old.
 void individual::time_lapse()
 {
 assert(w.w.shield>0);
@@ -452,7 +454,7 @@ if(w.w.jaws==AUTOTROPH) //IF IS AN  A U T O T R O P H ...
 assert(w._full>0);
 }
 
-/// copying the genotype with a possible mutation
+/// copying the genotype with a possible mutation.
 base2 individual::copy(base2 r)
 {
 base2 mask=( RANDOM(RADIATION) );
@@ -533,7 +535,7 @@ crater(x, y, power * WORLD_SIDE);
 }
 
 
-/**  INTERFEJSY I OGÓLNA FUNKCJA MAIN
+/*  INTERFEJSY I OGÓLNA FUNKCJA MAIN
  ***************************************/
 
 //void (*signal (int sig, void (*func)(...)))(...);
@@ -570,9 +572,9 @@ int world::control()
         zmieniony=1; // putchar(7);???
         switch(get_char()){
             case 'j':/* JAWS  */ individual::set_mode(0);break;
-            case 's':/*SHIELD*/  individual::set_mode(1);break;
+            case 's':/*SHIELDS*/ individual::set_mode(1);break;
             case 'e':/*STRENGTH*/individual::set_mode(2);break;
-            case 'a':/*AGE */    individual::set_mode(3);break;
+            case 'a':/*AGES */   individual::set_mode(3);break;
             case 't':/*TAXs*/    individual::set_mode(4);break;
             case '+':VisRand=1;break;
             case '-':VisRand=0;break;
@@ -608,12 +610,13 @@ if(!parse_options(argc,argv))
 
 if(sizeof(base)*2!=sizeof(base2))//static assert wtedy nie istniało
 	{
-	fprintf(stderr,"Niewłaściwe rozmiary dla typów bazowych:2*%lu!=%lu\n",
+	fprintf(stderr,"Niewłaściwe rozmiary dla typów bazowych: 2*%lu!=%lu\n",
 		(unsigned long) sizeof(base),(unsigned long) sizeof(base2));
 	exit(1);
 	}
 
 world& tenSwiat=*new world(LogName);
+
 if(&tenSwiat==NULL)
     {
     fprintf(stderr,"No memory!\n");
@@ -628,6 +631,7 @@ tenSwiat.init();
 tenSwiat.indicators();
 tenSwiat.entire_screen();
 install_signal_hooks();
+
 while(1)
 	{
 	tenSwiat.step();
@@ -637,11 +641,14 @@ while(1)
 		break;
 	}
 close_plot();
+
+delete &tenSwiat;
 printf("Goodbye!!!\n");
+
 return 0;
 }
 
-/// generate a para-poison distribution in the range 0..1 with 'n' degrees
+/// generate a para-Poisson distribution in the range 0..1 with 'n' degrees.
 double poison(int n)
 {
 double pom=1;
@@ -653,17 +660,17 @@ return pom;
 
 
 /* STATICS */
-unsigned individual::max=0;// what is the largest taxon
-unsigned individual::max_change=0;//... and whether the maximum changed recently
-unsigned individual::plot_mode=0;// what is to be displayed
-unsigned individual::count_ind=0;// how many living individuals are there
-unsigned individual::count_tax=0;// how many non-zero taxa
-unsigned individual::cnt_big_tax=0;// how many taxa are more than 10
-unsigned individual::counters[ (long)(MAX_BASE2 + 1) ];// Taxa counters
+unsigned individual::max=0;         // what is the largest taxon
+unsigned individual::max_change=0;  //... and whether the maximum changed recently
+unsigned individual::plot_mode=0;   // what is to be displayed
+unsigned individual::count_ind=0;   // how many living individuals are there
+unsigned individual::count_tax=0;   // how many non-zero taxa
+unsigned individual::cnt_big_tax=0; // how many taxa are more than 10
+unsigned individual::counters[ (long)(MAX_BASE2 + 1) ]; // Taxa counters
 
-/** CRATER - TRANSLATED FROM BASIC CODE IMPLEMENTED ELLIPSE DRAWING
-   BASED ON BRESENHAM ALGORITHM */
-void world::crater(int x, int y, int r) // Makes a hole in the simulation area
+/** "CRATER" function makes a hole in the simulation area.
+ * TRANSLATED FROM BASIC CODE IMPLEMENTED ELLIPSE DRAWING BASED ON BRESENHAM ALGORITHM. */
+void world::crater(int x, int y, int r) //
 {
 if(r<=1)
 	{ clearPosition(x, y); return; }
