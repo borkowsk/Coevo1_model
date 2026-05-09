@@ -9,6 +9,8 @@ The code is written in very simple C ++ but it implements the main idea of the m
 The next versions differed mainly in the increasingly complex visualization and 
 complexity of the collected statistics.
 
+<img src="./doc/historical-animation.gif" width="150" title="Historical artifact">
+
 The whole history of this research is available in a project at Research Gate.
 
 ___"Macroevolution & coevolution in CA & network like models"___
