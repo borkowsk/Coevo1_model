@@ -54,6 +54,8 @@ Or, if you have *Ninja* installed do better:
   $ ./coewo1
 ```
 
+<img src="./doc/interactions.png" title="Fractal of potential interactions">
+
 ## INSTITUTIONS
 
 * 1993-2002, ZAKŁAD SYSTEMATYKI I GEOGRAFII ROŚLIN, Wydział Biologii, Uniwersytet Warszawski: 
