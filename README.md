@@ -17,6 +17,10 @@ ___"Macroevolution & coevolution in CA & network like models"___
 
 https://www.researchgate.net/project/Macroevolution-coevolution-in-CA-network-like-models
 
+And one of the first paper is here: 
+
+https://www.researchgate.net/publication/24014499_Cellular_Automata_Model_of_Macroevolution
+
 ## Quick start
 
 It needs __SYMSHELLLIGHT__ library in sister directory _SymShellLight/_ !
